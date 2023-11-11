@@ -25,6 +25,7 @@ source-repository head
 
 library
   exposed-modules:
+      Hello
       Lib
   other-modules:
       Paths_word_game
@@ -35,6 +36,7 @@ library
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       base >=4.7 && <5
+    , brick
   default-language: Haskell2010
 
 executable word-game-exe
@@ -48,6 +50,7 @@ executable word-game-exe
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , brick
     , word-game
   default-language: Haskell2010
 
@@ -63,5 +66,6 @@ test-suite word-game-test
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , brick
     , word-game
   default-language: Haskell2010

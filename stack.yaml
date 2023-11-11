@@ -41,6 +41,11 @@ packages:
 #   commit: e7b331f14bcffb8367cd58fbfc8b40ec7642100a
 #
 # extra-deps: []
+extra-deps:
+- brick-2.1.1@sha256:ff36d64f1027eac17a14a83de053067413accb58b79e5002dce2a79cb8a3dcb3,17385
+- vty-6.0
+- vty-crossplatform-0.2.0.0
+- vty-unix-0.1.0.0
 
 # Override default flag values for local packages and extra-deps
 # flags: {}

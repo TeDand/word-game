@@ -25,8 +25,7 @@ source-repository head
 
 library
   exposed-modules:
-      Lib
-      ScoreBoard
+      Scoreboard
   other-modules:
       Paths_word_game
   autogen-modules:
@@ -37,6 +36,7 @@ library
   build-depends:
       base >=4.7 && <5
     , brick
+    , parsec
   default-language: Haskell2010
 
 executable word-game-exe
@@ -51,6 +51,7 @@ executable word-game-exe
   build-depends:
       base >=4.7 && <5
     , brick
+    , parsec
     , word-game
   default-language: Haskell2010
 
@@ -67,5 +68,6 @@ test-suite word-game-test
   build-depends:
       base >=4.7 && <5
     , brick
+    , parsec
     , word-game
   default-language: Haskell2010

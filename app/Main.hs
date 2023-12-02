@@ -1,9 +1,6 @@
 module Main (main) where
 
-import Lib
-
-import Hello
+import Scoreboard
 
 main :: IO ()
--- main = someFunc
-main = hello
+main = expScoreboard

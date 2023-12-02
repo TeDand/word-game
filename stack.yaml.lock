@@ -39,6 +39,13 @@ packages:
       size: 3503
   original:
     hackage: directory-1.3.7.1
+- completed:
+    hackage: cursor-0.3.2.0@sha256:f740872c165f2ab9dd386faa52eb167843379a484ac0482b630a2043ca9e9234,1656
+    pantry-tree:
+      sha256: cb9810744a8c78dc41d1121c48d32eb1d3cd583184a4eb146db2ea3fa0baaea2
+      size: 1720
+  original:
+    hackage: cursor-0.3.2.0
 snapshots:
 - completed:
     sha256: fb482b8e2d5d061cdda4ba1da2957c012740c893a5ee1c1b99001adae7b1fbe7

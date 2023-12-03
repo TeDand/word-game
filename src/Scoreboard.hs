@@ -42,14 +42,28 @@ writeScoreboard sb = writeFile "sb.txt" (show sb)
 
 addNewScore :: ScoreBoard -> String -> Int -> ScoreBoard
 addNewScore (Sb a b c) n i = do
-   if a==n && i>b then
+  (if a==n then
+    (if i>=b then
       Sb a i c
-   else
-      Sb a b (addNewScore c n i)
+    else
+      Sb a b c)
+  else
+    (if i>=b then
+      Sb n i (Sb a b (rmName c n))
+    else
+      Sb a b (addNewScore c n i)))
 addNewScore Empty n i = Sb n i Empty
+
+rmName :: ScoreBoard -> String -> ScoreBoard
+rmName (Sb a b c) n = do
+  if a==n then
+    c
+  else
+    Sb a b (rmName c n)
+rmName Empty _ = Empty
 
 expScoreboard :: IO ()
 expScoreboard = do
   sb <- readScoreboard
   print(sb)
-  writeScoreboard (addNewScore sb "somesix" 600)
+  writeScoreboard (addNewScore sb "somethree" 150)

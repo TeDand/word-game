@@ -26,9 +26,7 @@ source-repository head
 library
   exposed-modules:
       Dataloader
-      Directory
       Game
-      GameLogic
       Scoreboard
       Ship
       Tui

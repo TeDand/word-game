@@ -20,7 +20,6 @@ import qualified Brick.Forms as B
 
 import Graphics.Vty
 
-
 {-
 main :: IO String
 main = do {
@@ -51,68 +50,77 @@ data GameState = GameState { currentWord :: String
                             ,allPossibleWords :: [String]
 }
 
-type ResourceName = ()  -- No idea what this is yet
+type ResourceName = ()  -- No idea what this is for yet tbh
 
 drawGame :: GameState -> [B.Widget ResourceName]
-drawGame gs = case (started gs) of
-    False -> [B.str "Press start to enter a new game"] -- B.center $ B.str "Press start to enter a new game"
-    True ->  [B.str (currentWord gs)] -- B.center $ B.str (currentWord gs)
+drawGame gs = case (allPossibleWords gs) of 
+    x:xs -> [(B.str ("Type this:") B.<+> B.str (currentWord gs)) B.<=> (B.str (inputSoFar gs)) B.<=> (B.str ("Current Score:") B.<+> B.str(show $ currentScore gs))] -- B.center $ B.str (currentWord gs)
+    [] -> [(B.str ("You have beaten the game! Your final score is:") B.<+> B.str(show $ currentScore gs))]
 
 gameStartEvent :: B.EventM n s ()
-gameStartEvent = return ()
+gameStartEvent = return () -- Docs say for most programs, this will just be a return
 
 
 gameApp :: B.App GameState GameEvent ResourceName
-gameApp = B.App {B.appDraw = drawGame
-,B.appChooseCursor = B.neverShowCursor
-,B.appHandleEvent = handleGameEvent
-,B.appStartEvent = gameStartEvent
-,B.appAttrMap = ()
+gameApp = B.App {
+    B.appDraw = drawGame,
+    B.appChooseCursor = B.neverShowCursor,
+    B.appHandleEvent = handleGameEvent,
+    B.appStartEvent = gameStartEvent,
+    B.appAttrMap = attrMap
 }
 
+
+attrMap :: GameState -> B.AttrMap
+attrMap s = B.attrMap (B.bg white) []
 
 -- For handling events --
 
-trackUserInput :: GameState -> GameState
-trackUserInput currentState newUserInput = GameState {
-    currentWord = currentWord currentState, 
-    currentScore = currentScore currentState,
-    started = started currentState, 
-    inputSoFar = (inputSoFar currentState) ++ newUserInput,
-    allPossibleWords = allPossibleWords currentState
+trackUserInput :: Char -> B.EventM ResourceName GameState ()
+trackUserInput newUserInput = do {
+    currentState <- get;
+    put (GameState {
+        currentWord = currentWord currentState, 
+        currentScore = currentScore currentState,
+        inputSoFar = (inputSoFar currentState) ++ [newUserInput],
+        allPossibleWords = allPossibleWords currentState})
 }
 
-verifyInputAgainstWord :: GameState -> GameState
-verifyInputAgainstWord currentState = if (currentWord currentState) == (currentScore currentState) 
+verifyInputAgainstWord :: B.EventM ResourceName GameState ()
+verifyInputAgainstWord = do {
+    currentState <- get;
+    if (currentWord currentState) == (inputSoFar currentState) 
     then
         -- User has input the words correctly
-        GameState {
+        put (GameState {
             currentWord = head (allPossibleWords currentState),
             currentScore = (currentScore currentState) + 1,
-            started = (started currentState), 
             inputSoFar = "",
             allPossibleWords = tail (allPossibleWords currentState)
-        }
+        });
     else
-        GameState {
+        put (GameState {
             currentWord = currentWord currentState,
             currentScore = currentScore currentState,
             started = started currentState, 
             inputSoFar = "", -- Reset the word for the user to try again
             allPossibleWords = allPossibleWords currentState
+        });
+}
 
-        }
-
-handleGameEvent :: GameState -> (B.BrickEvent ResourceName GameEvent) -> B.EventM ResourceName GameState ()
-handleGameEvent state (B.VtyEvent (KChar inputChar)) = return $ trackUserInput state inputChar
-handleGameEvent state (B.VtyEvent (KEnter)) = return $ verifyInputAgainstWord state
+handleGameEvent :: B.BrickEvent ResourceName GameEvent -> B.EventM ResourceName GameState ()
+handleGameEvent (B.VtyEvent (EvKey (KChar inputChar) [])) = trackUserInput inputChar
+handleGameEvent (B.VtyEvent (EvKey KEnter [])) = verifyInputAgainstWord
 
 
 
 main :: IO ()
-main = do 
+main = do
+    putStrLn "Press Enter to start";
+    _ <- getLine;
+    words <- loadWords;
     let 
-        app = B.App {B.appDraw = drawGame}
-        initialState = GameState {currentWord = "", currentScore = 0, started = False}
+        app = gameApp
+        initialState = GameState {currentWord = "", currentScore = 0, started = True, inputSoFar = "", allPossibleWords = words}
     finalState <- B.defaultMain app initialState
     return ()

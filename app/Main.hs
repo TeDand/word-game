@@ -73,12 +73,12 @@ gameApp = B.App {
     B.appChooseCursor = B.neverShowCursor,
     B.appHandleEvent = handleGameEvent,
     B.appStartEvent = gameStartEvent,
-    B.appAttrMap = attrMap
+    B.appAttrMap = gameMap
 }
 
 
-attrMap :: GameState -> B.AttrMap
-attrMap s = B.attrMap (B.bg white) []
+gameMap :: GameState -> B.AttrMap
+gameMap s = B.attrMap (B.bg white) []
 
 -- For handling events --
 

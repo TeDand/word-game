@@ -9,11 +9,11 @@ import Graphics.Vty.Input.Events
 
 import Dataloader(loadWords)
 
-tui :: IO ()
+tui :: IO Int
 tui = do
   initialState <- buildInitialState
   endState <- defaultMain tuiApp initialState
-  print endState
+  return $ currentScore endState
 
 data TuiState = TuiState
   { tuiStateTarget :: String,

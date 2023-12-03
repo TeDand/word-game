@@ -25,6 +25,10 @@ source-repository head
 
 library
   exposed-modules:
+      Dataloader
+      GameLogic
+      Hello
+      Lib
       Game
       Ship
       Types
@@ -38,6 +42,7 @@ library
   build-depends:
       base >=4.7 && <5
     , brick
+    , mtl
     , lens
     , microlens
     , text
@@ -56,6 +61,7 @@ executable word-game-exe
   build-depends:
       base >=4.7 && <5
     , brick
+    , mtl
     , lens
     , microlens
     , text
@@ -76,6 +82,7 @@ test-suite word-game-test
   build-depends:
       base >=4.7 && <5
     , brick
+    , mtl
     , lens
     , microlens
     , text

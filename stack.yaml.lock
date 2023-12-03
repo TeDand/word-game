@@ -33,6 +33,19 @@ packages:
   original:
     hackage: vty-unix-0.1.0.0
 - completed:
+    hackage: directory-1.3.7.1@sha256:7d16bf127fb303bd69d9c433bb146c5815f9690933af1d5a6ee45dea2e536dc5,2971
+    pantry-tree:
+      sha256: 8fe5d578685d85c0cdb6cd6f342fe85b99968055a6e70802fcaad56caa1f6362
+      size: 3503
+  original:
+    hackage: directory-1.3.7.1
+- completed:
+    hackage: cursor-0.3.2.0@sha256:f740872c165f2ab9dd386faa52eb167843379a484ac0482b630a2043ca9e9234,1656
+    pantry-tree:
+      sha256: cb9810744a8c78dc41d1121c48d32eb1d3cd583184a4eb146db2ea3fa0baaea2
+      size: 1720
+  original:
+    hackage: cursor-0.3.2.0
     hackage: text-zipper-0.13@sha256:e1a48d69c9324ed3784bc39d5ded84d63ea3115b32a018ddf76158ed9d58dc0a,1472
     pantry-tree:
       sha256: c8e30137f3b5aae8b21ada32551f5d879bdf56165c0b42548fb1832011a60c57

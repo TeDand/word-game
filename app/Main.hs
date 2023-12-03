@@ -1,5 +1,8 @@
 module Main (main) where
 
+import Directory
+import Tui
+
 import Scoreboard
 
 import Game
@@ -130,3 +133,4 @@ main = do
     -- main = someFunc
     -- main = game
     -- main = expScoreboard
+    -- main = tui

@@ -25,6 +25,10 @@ source-repository head
 
 library
   exposed-modules:
+      Directory
+      Hello
+      Lib
+      Tui
       Scoreboard
       Dataloader
       GameLogic
@@ -43,6 +47,8 @@ library
   build-depends:
       base >=4.7 && <5
     , brick
+    , cursor
+    , directory
     , parsec
     , mtl
     , lens
@@ -63,6 +69,8 @@ executable word-game-exe
   build-depends:
       base >=4.7 && <5
     , brick
+    , cursor
+    , directory
     , parsec
     , mtl
     , lens
@@ -85,6 +93,8 @@ test-suite word-game-test
   build-depends:
       base >=4.7 && <5
     , brick
+    , cursor
+    , directory
     , parsec
     , mtl
     , lens

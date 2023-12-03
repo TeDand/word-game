@@ -6,12 +6,14 @@ import Brick
 -- import Brick.Types
 -- import Brick.Widgets.Core
 
-import Cursor.Simple.List.NonEmpty
-import qualified Data.List.NonEmpty as NE
+import Brick.Widgets.Center (hCenter)
+-- import Cursor.Simple.List.NonEmpty
+-- import qualified Data.List.NonEmpty as NE
 import Graphics.Vty.Attributes
 import Graphics.Vty.Input.Events
-import System.Directory
-import System.Exit
+
+-- import System.Directory
+-- import System.Exit
 
 tui :: IO ()
 tui = do
@@ -20,7 +22,8 @@ tui = do
   print endState
 
 data TuiState = TuiState
-  { tuiStatePaths :: NonEmptyCursor FilePath
+  { tuiStateTarget :: String,
+    tuiStateInput :: String
   }
   deriving (Show, Eq)
 
@@ -33,50 +36,40 @@ tuiApp =
       appChooseCursor = showFirstCursor,
       appHandleEvent = handleTuiEvent,
       appStartEvent = return (),
-      appAttrMap = const $ attrMap defAttr [(attrName "selected", fg red)]
+      appAttrMap = const $ attrMap defAttr [(attrName "input", fg yellow)]
     }
 
 buildInitialState :: IO TuiState
 buildInitialState = do
-  here <- getCurrentDirectory
-  contents <- listDirectory here
-  case NE.nonEmpty contents of
-    Nothing -> die "Empty directory"
-    Just ne ->
-      pure TuiState {tuiStatePaths = makeNonEmptyCursor ne}
+  let word = "Hello" -- Change this to the word you want to display
+  return TuiState {tuiStateTarget = word, tuiStateInput = ""}
 
 drawTui :: TuiState -> [Widget ResourceName]
 drawTui ts =
-  [ vBox $
-      concat
-        [ map (drawPath False) $ reverse $ nonEmptyCursorPrev nec,
-          [drawPath True $ nonEmptyCursorCurrent nec],
-          map (drawPath False) $ nonEmptyCursorNext nec
-        ]
+  [ vBox
+      [ hCenter (str "Type the word: "),
+        hCenter (withAttr (attrName "input") $ str inputWord),
+        hCenter (str (" (" ++ targetWord ++ ")"))
+      ]
   ]
   where
-    nec = tuiStatePaths ts
-
--- [vBox $ map drawPath $ tuiStatePaths ts]
-
-drawPath :: Bool -> FilePath -> Widget n
-drawPath b = (if b then withAttr (attrName "selected") else id) . str
+    inputWord = if tuiStateInput ts == "" then " " else tuiStateInput ts
+    targetWord = tuiStateTarget ts
 
 handleTuiEvent :: BrickEvent n e -> EventM n TuiState ()
 handleTuiEvent e = case e of
   VtyEvent vtye -> case vtye of
-    EvKey (KChar 'q') [] -> halt
-    EvKey KDown [] -> do
+    EvKey (KChar c) [] -> do
+      modify $ \s -> s {tuiStateInput = tuiStateInput s ++ [c]}
+      return ()
+    EvKey KBS [] -> do
+      modify $ \s -> s {tuiStateInput = init (tuiStateInput s)}
+      return ()
+    EvKey KEnter [] -> do
       ts <- get
-      let nec = tuiStatePaths ts
-      case nonEmptyCursorSelectNext nec of
-        Just nec' -> modify $ \s -> s {tuiStatePaths = nec'}
-        Nothing -> return ()
-    EvKey KUp [] -> do
-      ts <- get
-      let nec = tuiStatePaths ts
-      case nonEmptyCursorSelectPrev nec of
-        Just nec' -> modify $ \s -> s {tuiStatePaths = nec'}
-        Nothing -> return ()
+      if tuiStateInput ts == tuiStateTarget ts
+        then halt
+        else return ()
+    EvKey KEsc [] -> halt
     _ -> return ()
   _ -> return ()

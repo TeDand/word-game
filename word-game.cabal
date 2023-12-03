@@ -1,6 +1,6 @@
 cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.35.2.
+-- This file has been generated from package.yaml by hpack version 0.36.0.
 --
 -- see: https://github.com/sol/hpack
 
@@ -26,6 +26,13 @@ source-repository head
 library
   exposed-modules:
       Scoreboard
+      Dataloader
+      GameLogic
+      Hello
+      Lib
+      Game
+      Ship
+      Types
   other-modules:
       Paths_word_game
   autogen-modules:
@@ -37,6 +44,11 @@ library
       base >=4.7 && <5
     , brick
     , parsec
+    , mtl
+    , lens
+    , microlens
+    , text
+    , vty
   default-language: Haskell2010
 
 executable word-game-exe
@@ -52,6 +64,11 @@ executable word-game-exe
       base >=4.7 && <5
     , brick
     , parsec
+    , mtl
+    , lens
+    , microlens
+    , text
+    , vty
     , word-game
   default-language: Haskell2010
 
@@ -69,5 +86,10 @@ test-suite word-game-test
       base >=4.7 && <5
     , brick
     , parsec
+    , mtl
+    , lens
+    , microlens
+    , text
+    , vty
     , word-game
   default-language: Haskell2010

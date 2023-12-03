@@ -1,9 +1,14 @@
 module Main (main) where
 
-import Lib
 
-import Hello
+
+
+
+import Game
+import Ship
+import Brick
+import Brick.Widgets.Core
 
 main :: IO ()
 -- main = someFunc
-main = hello
+main = game

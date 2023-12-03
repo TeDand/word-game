@@ -29,6 +29,7 @@ library
       Game
       Scoreboard
       Ship
+      Shuffle
       Tui
       Types
   other-modules:
@@ -46,6 +47,7 @@ library
     , microlens
     , mtl
     , parsec
+    , random
     , text
     , vty
   default-language: Haskell2010
@@ -67,6 +69,7 @@ executable word-game-exe
     , microlens
     , mtl
     , parsec
+    , random
     , text
     , vty
     , word-game
@@ -90,6 +93,7 @@ test-suite word-game-test
     , microlens
     , mtl
     , parsec
+    , random
     , text
     , vty
     , word-game

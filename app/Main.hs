@@ -4,4 +4,8 @@ import Tui
 
 
 main :: IO ()
-main = tui
+main = do {
+    putStrLn "Press Enter to Start the Game";
+    _ <- getLine;
+    tui
+}

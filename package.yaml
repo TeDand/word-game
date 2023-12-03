@@ -30,6 +30,7 @@ dependencies:
 - lens
 - text
 - microlens
+- random
 
 ghc-options:
 - -Wall

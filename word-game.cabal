@@ -25,16 +25,8 @@ source-repository head
 
 library
   exposed-modules:
-<<<<<<< HEAD
       Dataloader
       Directory
-=======
-      Directory
-      Tui
-      Scoreboard
-      Dataloader
-      GameLogic
->>>>>>> 54aaa36ef0e9fff90d6d3b931d3bd01f48d1444a
       Game
       GameLogic
       Scoreboard
@@ -51,7 +43,6 @@ library
   build-depends:
       base >=4.7 && <5
     , brick
-    , cursor
     , directory
     , lens
     , microlens
@@ -73,7 +64,6 @@ executable word-game-exe
   build-depends:
       base >=4.7 && <5
     , brick
-    , cursor
     , directory
     , lens
     , microlens
@@ -97,7 +87,6 @@ test-suite word-game-test
   build-depends:
       base >=4.7 && <5
     , brick
-    , cursor
     , directory
     , lens
     , microlens

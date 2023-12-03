@@ -27,7 +27,7 @@ data TuiState = TuiState
   { tuiStateTarget :: String,
     tuiStateInput :: String,
     currentScore:: Int,
-    allPossibleWords :: [String]
+    remainingWords :: [String]
   }
   deriving (Show, Eq)
 
@@ -54,20 +54,71 @@ buildInitialState = do
     tuiStateTarget = head words, 
     tuiStateInput = "",
     remainingWords = tail words,
-    allPossibleWords}
+    currentScore = 0}
 
 drawTui :: TuiState -> [Widget ResourceName]
-drawTui ts =
-  [ vBox
+drawTui ts = case (remainingWords gs) of 
+  x:xs -> renderOngoingGameState ts
+  [] -> renderGameEndState ts
+
+renderOngoingGameState :: TuiState -> [Widget ResourceName]
+renderOngoingGameState ts = [ vBox
       [ hCenter (str "Type the word: "),
         hCenter (withAttr (attrName "input") $ str inputWord),
-        hCenter (str (" (" ++ targetWord ++ ")"))
+        hCenter (str (" (" ++ targetWord ++ ")")),
+        hCenter (str "CurrentScore: ")
+        hCenter (str (show $ currentScore ts))
       ]
   ]
   where
     inputWord = if tuiStateInput ts == "" then " " else tuiStateInput ts
     targetWord = tuiStateTarget ts
 
+renderGameEndState :: TuiState -> [Widget ResourceName]
+renderGameEndState ts = [(str ("You have beaten the game! Your final score is:") B.<+> B.str(show $ currentScore ts))]
+
+-- Functions to handle events
+
+handleTuiEvent :: BrickEvent n e -> EventM n TuiState ()
+handleTuiEvent e = case e of
+  VtyEvent vtye -> case vtye of
+    EvKey (KChar c) [] -> addUserInput c
+    EvKey KBS [] -> removeUserInput
+    EvKey KEnter [] -> verifyInputAgainstWord
+    EvKey KEsc [] -> halt
+    _ -> return ()
+  _ -> return ()
+
+addUserInput :: Char -> EventM n TuiState ()
+addUserInput newUserInput = do {
+    currentState <- get;
+    modify $ \s -> s {tuiStateInput = tuiStateInput s ++ [c]}
+}
+
+removeUserInput :: EventM n TuiState ()
+removeUserInput = do {
+  currentState <- get;
+  modify $ \s -> s {tuiStateInput = init (tuiStateInput s)}
+}
+
+verifyInputAgainstWord :: EventM n TuiState ()
+verifyInputAgainstWord = do {
+    currentState <- get;
+    if (tuiStateTarget currentState) == (tuiStateInput currentState) 
+    then
+        -- User has input the words correctly
+        put (GameState {
+            tuiStateTarget = head (remainingWords currentState),
+            tuiStateInput = "",
+            currentScore = (currentScore currentState) + 1,
+            remainingWords = tail (allPossibleWords currentState)
+        });
+    else
+      -- Incorrect; reset the input tracker
+        modify $ \s -> s {tuiStateInput = ""}
+}
+
+{-
 handleTuiEvent :: BrickEvent n e -> EventM n TuiState ()
 handleTuiEvent e = case e of
   VtyEvent vtye -> case vtye of
@@ -85,11 +136,11 @@ handleTuiEvent e = case e of
     EvKey KEsc [] -> halt
     _ -> return ()
   _ -> return ()
-
+-}
 
 
 -- My shit
-
+{- 
 data GameEvent = GameEvent
 
 data GameState = GameState { currentWord :: String
@@ -159,3 +210,4 @@ verifyInputAgainstWord = do {
 handleGameEvent :: B.BrickEvent ResourceName GameEvent -> B.EventM ResourceName GameState ()
 handleGameEvent (B.VtyEvent (EvKey (KChar inputChar) [])) = trackUserInput inputChar
 handleGameEvent (B.VtyEvent (EvKey KEnter [])) = verifyInputAgainstWord
+-}

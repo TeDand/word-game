@@ -96,7 +96,7 @@ removeUserInput = do {
 verifyInputAgainstWord :: EventM n TuiState ()
 verifyInputAgainstWord = do {
     currentState <- get;
-    if (tuiStateTarget currentState) == (tuiStateInput currentState) 
+    if tuiStateTarget currentState == tuiStateInput currentState
     then
         -- User has input the words correctly
         put (TuiState {

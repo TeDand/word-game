@@ -24,6 +24,9 @@ dependencies:
 - brick
 - mtl
 - vty
+- lens
+- text
+- microlens
 
 ghc-options:
 - -Wall

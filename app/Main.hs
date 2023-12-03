@@ -1,8 +1,13 @@
 module Main (main) where
 
-import Lib
 
-import Hello
+
+
+
+import Game
+import Ship
+import Brick
+import Brick.Widgets.Core
 
 import Dataloader
 
@@ -124,3 +129,5 @@ main = do
         initialState = GameState {currentWord = "", currentScore = 0, started = True, inputSoFar = "", allPossibleWords = words}
     finalState <- B.defaultMain app initialState
     return ()
+    -- main = someFunc
+    -- main = game

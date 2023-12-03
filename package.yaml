@@ -22,9 +22,14 @@ description:         Please see the README on GitHub at <https://github.com/gith
 dependencies:
 - base >= 4.7 && < 5
 - brick
-- vty
 - directory
 - cursor
+- parsec
+- mtl
+- vty
+- lens
+- text
+- microlens
 
 ghc-options:
 - -Wall

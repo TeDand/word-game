@@ -1,0 +1,3 @@
+"someone" 100
+"sometwo" 200
+"somesix" 600

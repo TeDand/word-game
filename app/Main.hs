@@ -1,8 +1,6 @@
 module Main (main) where
 
-
-
-
+import Scoreboard
 
 import Game
 import Ship
@@ -131,3 +129,4 @@ main = do
     return ()
     -- main = someFunc
     -- main = game
+    -- main = expScoreboard

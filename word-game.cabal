@@ -26,14 +26,10 @@ source-repository head
 library
   exposed-modules:
       Directory
-      Hello
-      Lib
       Tui
       Scoreboard
       Dataloader
       GameLogic
-      Hello
-      Lib
       Game
       Ship
       Types

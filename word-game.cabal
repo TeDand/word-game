@@ -1,6 +1,6 @@
 cabal-version: 2.2
 
--- This file has been generated from package.yaml by hpack version 0.35.2.
+-- This file has been generated from package.yaml by hpack version 0.36.0.
 --
 -- see: https://github.com/sol/hpack
 
@@ -25,6 +25,8 @@ source-repository head
 
 library
   exposed-modules:
+      Dataloader
+      GameLogic
       Hello
       Lib
   other-modules:
@@ -37,6 +39,8 @@ library
   build-depends:
       base >=4.7 && <5
     , brick
+    , mtl
+    , vty
   default-language: Haskell2010
 
 executable word-game-exe
@@ -51,6 +55,8 @@ executable word-game-exe
   build-depends:
       base >=4.7 && <5
     , brick
+    , mtl
+    , vty
     , word-game
   default-language: Haskell2010
 
@@ -67,5 +73,7 @@ test-suite word-game-test
   build-depends:
       base >=4.7 && <5
     , brick
+    , mtl
+    , vty
     , word-game
   default-language: Haskell2010

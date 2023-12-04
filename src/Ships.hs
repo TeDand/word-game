@@ -5,8 +5,8 @@ module Ships
     where
 
 import Brick
-
-asciShip :: Widget ()
+type ResourceName = String
+asciShip :: Widget ResourceName
 asciShip = str "                     /~~~~~|"
         <=> str "               .__./''''''|"
         <=> str "._____________/   |/^^^^^^^\\____"
@@ -18,10 +18,10 @@ asciShip = str "                     /~~~~~|"
         <=> padTop (Pad 2) (str "           DEFEND YOUR SHIP!     ")
 
 
-ship :: Widget()
+ship :: Widget ResourceName
 ship =  (padLeft Max asciShip)
 
-evilShip :: Widget ()
+evilShip :: Widget ResourceName
 evilShip = str "[=====>"
             <=> str "[  (    _____"
             <=> str " \\__\\,-'//   `--._"

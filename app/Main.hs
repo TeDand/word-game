@@ -11,7 +11,7 @@ import Brick.Widgets.Core
 import qualified Brick.Widgets.Edit as B
 import Control.Monad.State
 import Dataloader
-import Game
+-- import Game
 import Graphics.Vty
 import Scoreboard
 import Ships
@@ -30,6 +30,6 @@ main = do
   return ()
 -}
 -- main = someFunc
-main = game
+-- main = game
 -- main = expScoreboard
--- main = tui
+main = tui

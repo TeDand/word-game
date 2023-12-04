@@ -27,3 +27,20 @@ Create a terminal based game where users can type target words to get points. Th
   - Asteroids and gun
   - Adding menu system
 
+
+## Updates
+
+This application currently has a few key components:
+
+- User input and evaluation (scoring)
+- Random word generation
+- Time limit to enter word
+- Game graphics for words moving across the screen
+- File reading for persistent storage of leaderboard 
+
+There have been some challenges along the way:
+
+- Recent changes to the brick API, meaning lots of previous documentation and examples are obsolete, but knowledge of monads came in very handy
+- Organisation of largescale Haskell project is initially difficult, but once we managed to get a skeleton up and running we were more able to effectively paralellize work
+  
+We believe that given our current progress we will be able to meet most/all of the main goals we initially set out. The scope of the game may change somewhat, as we currently have words being shot horizontally across the screen. We may be unable to add some of the finer details such as words moving randomly/rotating.

@@ -1,3 +1,10 @@
+module Shuffle
+  ( sample,
+    shuffle,
+    example,
+  )
+where
+
 import System.Random
 
 sample :: [String]

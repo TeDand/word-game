@@ -26,6 +26,7 @@ source-repository head
 library
   exposed-modules:
       Scoreboard
+      Shuffle
   other-modules:
       Paths_word_game
   autogen-modules:

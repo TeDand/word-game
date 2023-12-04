@@ -37,6 +37,7 @@ library
       base >=4.7 && <5
     , brick
     , parsec
+    , random
   default-language: Haskell2010
 
 executable word-game-exe
@@ -52,6 +53,7 @@ executable word-game-exe
       base >=4.7 && <5
     , brick
     , parsec
+    , random
     , word-game
   default-language: Haskell2010
 
@@ -69,5 +71,6 @@ test-suite word-game-test
       base >=4.7 && <5
     , brick
     , parsec
+    , random
     , word-game
   default-language: Haskell2010

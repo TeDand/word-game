@@ -27,7 +27,6 @@ library
   exposed-modules:
       Dataloader
       Game
-      GameLogic
       Scoreboard
       Ships
       Tui

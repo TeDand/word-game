@@ -1,19 +1,13 @@
 module Tui (tui) where
 
 import Brick
--- import Brick.AttrMap
--- import Brick.Main
--- import Brick.Types
--- import Brick.Widgets.Core
 
 import Brick.Widgets.Center (hCenter)
--- import Cursor.Simple.List.NonEmpty
--- import qualified Data.List.NonEmpty as NE
 import Graphics.Vty.Attributes
 import Graphics.Vty.Input.Events
 
--- import System.Directory
--- import System.Exit
+
+import Dataloader(loadWords)
 
 tui :: IO ()
 tui = do
@@ -23,7 +17,9 @@ tui = do
 
 data TuiState = TuiState
   { tuiStateTarget :: String,
-    tuiStateInput :: String
+    tuiStateInput :: String,
+    currentScore:: Int,
+    remainingWords :: [String]
   }
   deriving (Show, Eq)
 
@@ -36,40 +32,80 @@ tuiApp =
       appChooseCursor = showFirstCursor,
       appHandleEvent = handleTuiEvent,
       appStartEvent = return (),
-      appAttrMap = const $ attrMap defAttr [(attrName "input", fg yellow)]
+      appAttrMap = gameMap
     }
+
+gameMap :: TuiState -> AttrMap
+gameMap _ = attrMap defAttr [(attrName "input", fg yellow)]
+
 
 buildInitialState :: IO TuiState
 buildInitialState = do
-  let word = "Hello" -- Change this to the word you want to display
-  return TuiState {tuiStateTarget = word, tuiStateInput = ""}
+  wordsToType <- loadWords
+  return TuiState {
+    tuiStateTarget = head wordsToType, 
+    tuiStateInput = "",
+    remainingWords = tail wordsToType,
+    currentScore = 0}
 
 drawTui :: TuiState -> [Widget ResourceName]
-drawTui ts =
-  [ vBox
+drawTui ts = case remainingWords ts of 
+  _:_ -> renderOngoingGameState ts
+  [] -> renderGameEndState ts
+
+renderOngoingGameState :: TuiState -> [Widget ResourceName]
+renderOngoingGameState ts = [ vBox
       [ hCenter (str "Type the word: "),
         hCenter (withAttr (attrName "input") $ str inputWord),
-        hCenter (str (" (" ++ targetWord ++ ")"))
+        hCenter (str (" (" ++ targetWord ++ ")")),
+        hCenter (str "CurrentScore: "),
+        hCenter (str (show $ currentScore ts))
       ]
   ]
   where
     inputWord = if tuiStateInput ts == "" then " " else tuiStateInput ts
     targetWord = tuiStateTarget ts
 
+renderGameEndState :: TuiState -> [Widget ResourceName]
+renderGameEndState ts = [str "You have beaten the game! Your final score is:" <+> str(show $ currentScore ts)]
+
+-- Functions to handle events
+
 handleTuiEvent :: BrickEvent n e -> EventM n TuiState ()
 handleTuiEvent e = case e of
   VtyEvent vtye -> case vtye of
-    EvKey (KChar c) [] -> do
-      modify $ \s -> s {tuiStateInput = tuiStateInput s ++ [c]}
-      return ()
-    EvKey KBS [] -> do
-      modify $ \s -> s {tuiStateInput = init (tuiStateInput s)}
-      return ()
-    EvKey KEnter [] -> do
-      ts <- get
-      if tuiStateInput ts == tuiStateTarget ts
-        then halt
-        else return ()
+    EvKey (KChar c) [] -> addUserInput c
+    EvKey KBS [] -> removeUserInput
+    EvKey KEnter [] -> verifyInputAgainstWord
     EvKey KEsc [] -> halt
     _ -> return ()
   _ -> return ()
+
+addUserInput :: Char -> EventM n TuiState ()
+addUserInput c = do {
+    _ <- get;
+    modify $ \s -> s {tuiStateInput = tuiStateInput s ++ [c]}
+}
+
+removeUserInput :: EventM n TuiState ()
+removeUserInput = do {
+  _ <- get;
+  modify $ \s -> s {tuiStateInput = init (tuiStateInput s)}
+}
+
+verifyInputAgainstWord :: EventM n TuiState ()
+verifyInputAgainstWord = do {
+    currentState <- get;
+    if (tuiStateTarget currentState) == (tuiStateInput currentState) 
+    then
+        -- User has input the words correctly
+        put (TuiState {
+            tuiStateTarget = head (remainingWords currentState),
+            tuiStateInput = "",
+            currentScore = currentScore currentState+ 1,
+            remainingWords = tail (remainingWords currentState)
+        });
+    else
+      -- Incorrect; reset the input tracker
+        modify $ \s -> s {tuiStateInput = ""}
+}

@@ -26,9 +26,8 @@ source-repository head
 library
   exposed-modules:
       Dataloader
-      Game
       Scoreboard
-      Ship
+      Ships
       Shuffle
       Tui
       Types

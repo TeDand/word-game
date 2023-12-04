@@ -2,7 +2,6 @@ module Scoreboard
   ( readScoreboard,
   writeScoreboard,
   addNewScore,
-  expScoreboard,
   )
 where
 
@@ -37,19 +36,35 @@ readScoreboard = do
    (Right x) -> return x
    _ -> error "no scoreboard"
 
-writeScoreboard :: ScoreBoard -> IO ()
-writeScoreboard sb = writeFile "sb.txt" (show sb)
+writeScoreboard :: ScoreBoard -> IO ScoreBoard
+writeScoreboard sb = writeFile "sb.txt" (show sb) >> return sb
 
 addNewScore :: ScoreBoard -> String -> Int -> ScoreBoard
 addNewScore (Sb a b c) n i = do
-   if a==n && i>b then
+  (if a==n then
+    (if i>=b then
       Sb a i c
-   else
-      Sb a b (addNewScore c n i)
+    else
+      Sb a b c)
+  else
+    (if i>=b then
+      Sb n i (Sb a b (rmName c n))
+    else
+      Sb a b (addNewScore c n i)))
 addNewScore Empty n i = Sb n i Empty
 
+rmName :: ScoreBoard -> String -> ScoreBoard
+rmName (Sb a b c) n = do
+  if a==n then
+    c
+  else
+    Sb a b (rmName c n)
+rmName Empty _ = Empty
+
+{-
 expScoreboard :: IO ()
 expScoreboard = do
   sb <- readScoreboard
   print(sb)
-  writeScoreboard (addNewScore sb "somesix" 600)
+  writeScoreboard (addNewScore sb "somethree" 150)
+  -}

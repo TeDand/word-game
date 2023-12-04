@@ -29,7 +29,7 @@ tui = do
   initialState <- buildInitialState
   void $ customMainWithDefaultVty (Just chan) tuiApp initialState
   endState <- defaultMain tuiApp initialState
-  print endState
+  return $ currentScore endState
 
 data TuiState = TuiState
   { tuiStateTarget :: String,
@@ -177,7 +177,7 @@ removeUserInput = do {
 verifyInputAgainstWord :: EventM n TuiState ()
 verifyInputAgainstWord = do {
     currentState <- get;
-    if (tuiStateTarget currentState) == (tuiStateInput currentState) 
+    if tuiStateTarget currentState == tuiStateInput currentState
     then
         -- User has input the words correctly
         put (TuiState {

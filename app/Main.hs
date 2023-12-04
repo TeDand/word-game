@@ -1,8 +1,6 @@
 module Main (main) where
 
 import Brick
--- import Brick
-
 import qualified Brick as B
 import qualified Brick.Forms as B
 import qualified Brick.Widgets.Border as B
@@ -16,20 +14,20 @@ import Graphics.Vty
 import Scoreboard
 import Ships
 import Tui
+import Scoreboard
 
 
 main :: IO ()
-{-
-main = do
-  putStrLn "Press Enter to start"
-  _ <- getLine
-  words <- loadWords
-  let app = gameApp
-      initialState = GameState {currentWord = "", currentScore = 0, started = True, inputSoFar = "", allPossibleWords = words}
-  finalState <- B.defaultMain app initialState
-  return ()
--}
--- main = someFunc
--- main = game
--- main = expScoreboard
-main = tui
+main = do {
+    putStrLn "Press Enter to Start the Game";
+    _ <- getLine;
+    finalScore <- tui;
+    scoreBoard <- readScoreboard;
+    putStrLn "Enter your username to save your score!";
+    username <- getLine;
+    
+  
+    writtenBoard <- writeScoreboard (addNewScore scoreBoard username finalScore);
+    putStrLn "Current Scoreboard:";
+    print (writtenBoard)
+}

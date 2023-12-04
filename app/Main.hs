@@ -11,12 +11,11 @@ import Brick.Widgets.Core
 import qualified Brick.Widgets.Edit as B
 import Control.Monad.State
 import Dataloader
-import Directory
 import Game
 import GameLogic (gameLoop)
 import Graphics.Vty
 import Scoreboard
-import Ship
+import Ships
 import Tui
 
 {-
@@ -117,16 +116,16 @@ handleGameEvent (B.VtyEvent (EvKey (KChar inputChar) [])) = trackUserInput input
 handleGameEvent (B.VtyEvent (EvKey KEnter [])) = verifyInputAgainstWord
 
 main :: IO ()
-main = do
-  putStrLn "Press Enter to start"
-  _ <- getLine
-  words <- loadWords
-  let app = gameApp
-      initialState = GameState {currentWord = "", currentScore = 0, started = True, inputSoFar = "", allPossibleWords = words}
-  finalState <- B.defaultMain app initialState
-  return ()
+-- main = do
+--   putStrLn "Press Enter to start"
+--   _ <- getLine
+--   words <- loadWords
+--   let app = gameApp
+--       initialState = GameState {currentWord = "", currentScore = 0, started = True, inputSoFar = "", allPossibleWords = words}
+--   finalState <- B.defaultMain app initialState
+--   return ()
 
 -- main = someFunc
--- main = game
+main = game
 -- main = expScoreboard
 -- main = tui

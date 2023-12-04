@@ -6,7 +6,7 @@ module Game
         game
     )
 where  
-import Ship
+import Ships
 
 import Control.Lens
 import Control.Monad.IO.Class (liftIO)
@@ -23,13 +23,12 @@ import Brick
 data CustomEvent = MoveDown | Tick deriving Show
 
 data St =
-    St { _stLastBrickEvent :: Maybe (BrickEvent () CustomEvent)
-       , _timer :: Int
-       , _enemy :: Int
+    St { 
+        _timer :: Int
+       , _distance :: Int
        , _level :: Int
        , _health :: Float
        }
-
 makeLenses ''St
 
 drawUI :: St -> [Widget ()]
@@ -56,10 +55,14 @@ getHealth st = ui
             (str "Health: " <+> healthBar)           
           
 enemyShip :: St -> Widget ()
-enemyShip st =    (str $ "Enemies: " <> replicate (st^.enemy-1) ' ' <> "word")
+enemyShip st =  padTop (Pad 2)
+            (evilShip
+            <+>
+
+            (str $ replicate (st^.distance-1) ' ' <> "word")
             
             <+>
-            ship
+            ship)
 
 
 
@@ -67,18 +70,16 @@ appEvent :: BrickEvent () CustomEvent -> EventM () St ()
 appEvent e =
     case e of
         VtyEvent (V.EvKey V.KEsc []) -> halt
-        VtyEvent _ -> stLastBrickEvent .= (Just e)
-        AppEvent MoveDown -> enemy %= (\row -> if row < 10 then row + 1 else 0)
+        AppEvent MoveDown -> distance %= (\row -> if row < 80 then row + 1 else 0)
         AppEvent Tick -> do
             timer %= (\c -> if c > 0 then c - 1 else 0)
-            stLastBrickEvent .= (Just e)
+            
         _ -> return ()
 
 initialState :: St
 initialState =
-    St { _stLastBrickEvent = Nothing
-       , _timer = 20
-       , _enemy = 0
+    St {  _timer = 20
+       , _distance = 0
        , _level = 1
        , _health = 1.0
        }
@@ -113,7 +114,7 @@ game = do
 
     void $ forkIO $ forever $ do
         writeBChan chan MoveDown
-        threadDelay 600000 -- enemy
+        threadDelay 100000 -- enemy
 
     void $ forkIO $ forever $ do
         writeBChan chan Tick

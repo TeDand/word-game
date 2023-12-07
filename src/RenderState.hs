@@ -50,9 +50,19 @@ enemyShip ts word =
   padTop
     (Pad 2)
     ( evilShip
-        <+> str (replicate (distance ts - 1) ' ' <> word)
+        <+> highlightMatchingPart (distance ts) word (tuiStateInput ts)
         <+> ship
     )
+
+highlightMatchingPart :: Int -> String -> String -> Widget ResourceName
+highlightMatchingPart dist target input =
+  str (replicate (dist - 1) ' ') <+> go target input emptyWidget
+  where
+    go [] _ acc = acc
+    go remaining [] acc = acc <+> str remaining
+    go (t : ts) (i : is) acc
+      | t == i = go ts is (acc <+> withAttr matchingAttr (str [t]))
+      | otherwise = go ts (replicate (length is) ' ') (acc <+> str [t]) -- Space or another character to indicate non-matching part
 
 renderGameEndState :: TuiState -> [Widget ResourceName]
 renderGameEndState ts = [str "You have beaten the game! Your final score is: " <+> str (show $ currentScore ts)]

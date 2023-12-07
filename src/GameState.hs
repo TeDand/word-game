@@ -8,7 +8,8 @@ data TuiState = TuiState
     timer :: Int,
     distance :: Int,
     level :: Int,
-    health :: Float
+    health :: Float,
+    announcement :: (Int, String)
   }
   deriving (Show, Eq)
 

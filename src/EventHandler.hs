@@ -17,6 +17,8 @@ handleTuiEvent e = case e of
     ts <- get
     let t = timer ts
     modify $ \s -> s {timer = if t > 0 then t - 1 else 0}
+    let a = fst (announcement ts)
+    modify $ \s -> s {announcement = if a > 0 then (a - 1, snd (announcement ts)) else (0, "")}
   -- timer %= (\c -> if c > 0 then c - 1 else 0)
   VtyEvent vtye -> case vtye of
     EvKey (KChar c) [] -> addUserInput c
@@ -51,8 +53,11 @@ verifyInputAgainstWord = do
               timer = timer currentState,
               distance = distance currentState,
               level = level currentState,
-              health = health currentState
+              health = health currentState,
+              announcement = (0, "")
             }
         )
-    else -- Incorrect; reset the input tracker
-    modify $ \s -> s {tuiStateInput = ""}
+    else do
+      -- User has input the words incorrectly
+      modify $ \s -> s {tuiStateInput = ""}
+      modify $ \s -> s {announcement = (10, "INCORRECT!")}

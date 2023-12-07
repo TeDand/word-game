@@ -7,9 +7,19 @@ import GameState
 import Ships
 
 drawTui :: TuiState -> [Widget ResourceName]
-drawTui ts = case remainingWords ts of
-  _ : _ -> renderOngoingGameState ts
-  [] -> renderGameEndState ts
+drawTui ts =
+  if fst (announcement ts) /= 0
+    then renderAnnouncement ts
+    else case remainingWords ts of
+      _ : _ -> renderOngoingGameState ts
+      [] -> renderGameEndState ts
+
+renderAnnouncement :: TuiState -> [Widget ResourceName]
+renderAnnouncement ts = [a]
+  where
+    a =
+      str (snd (announcement ts))
+        <=> str ("Your final score is: " <> show (currentScore ts))
 
 renderOngoingGameState :: TuiState -> [Widget ResourceName]
 renderOngoingGameState ts = [a]

@@ -49,5 +49,6 @@ buildInitialState = do
         timer = 20,
         distance = 0,
         level = 1,
-        health = 1.0
+        health = 1.0,
+        announcement = (0, "")
       }

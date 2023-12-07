@@ -2,6 +2,7 @@ module RenderState (drawTui) where
 
 import Attributes
 import Brick
+import Brick.Widgets.Center
 import qualified Brick.Widgets.ProgressBar as P
 import GameState
 import Ships
@@ -15,11 +16,18 @@ drawTui ts =
       [] -> renderGameEndState ts
 
 renderAnnouncement :: TuiState -> [Widget ResourceName]
-renderAnnouncement ts = [a]
+renderAnnouncement ts =
+  [ vBox
+      [ hCenter (withAttr announcementAttr (str " ")),
+        hCenter (withAttr announcementAttr (str " ")),
+        hCenter (withAttr announcementAttr (str " ")),
+        hCenter (withAttr announcementAttr (str " ")),
+        hCenter (withAttr announcementAttr a)
+      ]
+  ]
   where
     a =
       str (snd (announcement ts))
-        <=> str ("Your final score is: " <> show (currentScore ts))
 
 renderOngoingGameState :: TuiState -> [Widget ResourceName]
 renderOngoingGameState ts = [a]

@@ -8,38 +8,25 @@ import GameState
 import Ships
 
 drawTui :: TuiState -> [Widget ResourceName]
-drawTui ts =
-  if fst (announcement ts) /= 0
-    then renderAnnouncement ts
-    else case remainingWords ts of
+drawTui ts
+  | abs (health ts) <= 0.1 = renderGameOverState ts
+  | otherwise = case remainingWords ts of
       _ : _ -> renderOngoingGameState ts
       [] -> renderGameEndState ts
-
-renderAnnouncement :: TuiState -> [Widget ResourceName]
-renderAnnouncement ts =
-  [ vBox
-      [ hCenter (withAttr announcementAttr (str " ")),
-        hCenter (withAttr announcementAttr (str " ")),
-        hCenter (withAttr announcementAttr (str " ")),
-        hCenter (withAttr announcementAttr (str " ")),
-        hCenter (withAttr announcementAttr a)
-      ]
-  ]
-  where
-    a =
-      str (snd (announcement ts))
 
 renderOngoingGameState :: TuiState -> [Widget ResourceName]
 renderOngoingGameState ts = [a]
   where
+    inputWord = if tuiStateInput ts == "" then " " else tuiStateInput ts
+    targetWord = tuiStateTarget ts
+    ann = if fst (announcement ts) /= 0 then snd (announcement ts) else " "
     a =
       str ("Level: " <> show (level ts))
         <=> str ("Time Left: " <> show (timer ts))
         <=> enemyShip ts targetWord
-        <=> str inputWord
+        <=> hCenter (withAttr inputAttr (str inputWord))
+        <=> hCenter (withAttr announcementAttr (str ann))
         <=> padTop (Pad 5) (getHealth ts)
-    inputWord = if tuiStateInput ts == "" then " " else tuiStateInput ts
-    targetWord = tuiStateTarget ts
 
 getHealth :: TuiState -> Widget ResourceName
 getHealth st = ui
@@ -68,4 +55,7 @@ enemyShip ts word =
     )
 
 renderGameEndState :: TuiState -> [Widget ResourceName]
-renderGameEndState ts = [str "You have beaten the game! Your final score is:" <+> str (show $ currentScore ts)]
+renderGameEndState ts = [str "You have beaten the game! Your final score is: " <+> str (show $ currentScore ts)]
+
+renderGameOverState :: TuiState -> [Widget ResourceName]
+renderGameOverState ts = [str "You have lost the game! Your final score is: " <+> str (show $ currentScore ts)]

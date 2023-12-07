@@ -61,3 +61,4 @@ verifyInputAgainstWord = do
       -- User has input the words incorrectly
       modify $ \s -> s {tuiStateInput = ""}
       modify $ \s -> s {announcement = (2, "INCORRECT INPUT!")}
+      modify $ \s -> s {health = health s - 0.2}

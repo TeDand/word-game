@@ -25,7 +25,11 @@ source-repository head
 
 library
   exposed-modules:
+      Attributes
       Dataloader
+      EventHandler
+      GameState
+      RenderState
       Scoreboard
       Ships
       Shuffle

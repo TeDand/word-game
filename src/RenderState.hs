@@ -40,14 +40,20 @@ getHealth st = ui
     ui =
       str "Health: " <+> healthBar
 
-enemyShip :: TuiState -> String -> Widget ResourceName
-enemyShip ts word =
+enemyShip :: TuiState -> [String] -> Widget ResourceName
+enemyShip ts wordsToShow =
   padTop
     (Pad 2)
     ( evilShip
-        <+> str (replicate (distance ts - 1) ' ' <> word)
+        <+> 
+        enemyShipHelper ts wordsToShow
         <+> ship
     )
+
+enemyShipHelper :: TuiState -> [String] -> Widget ResourceName
+enemyShipHelper _ [] = str ""
+enemyShipHelper ts wordsToShow = str (replicate (distance ts - 1) ' ' <> head wordsToShow) <=> str "\n" <=> enemyShipHelper ts (tail wordsToShow)
+
 
 renderGameEndState :: TuiState -> [Widget ResourceName]
 renderGameEndState ts = [str "You have beaten the game! Your final score is:" <+> str (show $ currentScore ts)]

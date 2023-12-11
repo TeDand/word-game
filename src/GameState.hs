@@ -1,14 +1,16 @@
 module GameState (TuiState (..), ResourceName) where
+import Dataloader (Difficulty)
 
 data TuiState = TuiState
-  { tuiStateTarget :: String,
+  { tuiStateTarget :: [String],
     tuiStateInput :: String,
     currentScore :: Int,
     remainingWords :: [String],
     timer :: Int,
     distance :: Int,
     level :: Int,
-    health :: Float
+    health :: Float,
+    difficultyLevel :: Difficulty
   }
   deriving (Show, Eq)
 

@@ -1,7 +1,6 @@
 module Main (main) where
 
-import Scoreboard
-import Tui
+import Menu
 
 -- main :: IO Int
 -- main = do
@@ -17,4 +16,4 @@ import Tui
 --   print (writtenBoard)
 
 main :: IO ()
-main = tui
+main = menu 0

@@ -36,8 +36,8 @@ readScoreboard = do
    (Right x) -> return x
    _ -> error "no scoreboard"
 
-writeScoreboard :: ScoreBoard -> IO ScoreBoard
-writeScoreboard sb = writeFile "sb.txt" (show sb) >> return sb
+writeScoreboard :: ScoreBoard -> IO ()
+writeScoreboard sb = writeFile "sb.txt" (show sb)
 
 addNewScore :: ScoreBoard -> String -> Int -> ScoreBoard
 addNewScore (Sb a b c) n i = do

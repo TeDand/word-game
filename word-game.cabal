@@ -25,16 +25,8 @@ source-repository head
 
 library
   exposed-modules:
-      Attributes
-      Dataloader
-      EventHandler
-      GameState
-      RenderState
       Scoreboard
-      Ships
-      Shuffle
-      Tui
-      Types
+      Menu
   other-modules:
       Paths_word_game
   autogen-modules:

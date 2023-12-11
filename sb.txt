@@ -1,6 +1,5 @@
 "someone" 100
 "sometwo" 200
 "somesix" 600
-"nfewuwe" 3
-"woof" 3
-"meow" 3
+"ateb" 2
+"alpha" 1

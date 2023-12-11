@@ -4,4 +4,4 @@ import Scoreboard
 import Shuffle
 
 main :: IO ()
-main = example
+main = expScoreboard

@@ -66,4 +66,6 @@ expScoreboard :: IO ()
 expScoreboard = do
   sb <- readScoreboard
   print(sb)
-  writeScoreboard (addNewScore sb "somethree" 150)
+  let new = addNewScore sb "somethree" 240
+  writeScoreboard (new)
+  print(new)

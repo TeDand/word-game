@@ -99,7 +99,7 @@ diffApp w =
 
 diffHandle :: BrickEvent () e -> EventM () Int ()
 diffHandle (VtyEvent (V.EvKey V.KEsc [])) = halt
-diffHandle (VtyEvent (V.EvKey (V.KChar '0') [])) = do put 0; halt
 diffHandle (VtyEvent (V.EvKey (V.KChar '1') [])) = do put 1; halt
 diffHandle (VtyEvent (V.EvKey (V.KChar '2') [])) = do put 2; halt
+diffHandle (VtyEvent (V.EvKey (V.KChar '3') [])) = do put 3; halt
 diffHandle _ = continueWithoutRedraw

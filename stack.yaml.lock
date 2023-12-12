@@ -45,12 +45,6 @@ packages:
       sha256: cb9810744a8c78dc41d1121c48d32eb1d3cd583184a4eb146db2ea3fa0baaea2
       size: 1720
   original:
-    hackage: cursor-0.3.2.0
-    hackage: text-zipper-0.13@sha256:e1a48d69c9324ed3784bc39d5ded84d63ea3115b32a018ddf76158ed9d58dc0a,1472
-    pantry-tree:
-      sha256: c8e30137f3b5aae8b21ada32551f5d879bdf56165c0b42548fb1832011a60c57
-      size: 604
-  original:
     hackage: text-zipper-0.13@sha256:e1a48d69c9324ed3784bc39d5ded84d63ea3115b32a018ddf76158ed9d58dc0a,1472
 - completed:
     hackage: bimap-0.5.0@sha256:aba506d02a1c93fc2b50dcbe728d2a4d07cca89b7033945418061a0b08576ebd,1889

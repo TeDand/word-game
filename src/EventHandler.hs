@@ -1,10 +1,10 @@
 module EventHandler (handleTuiEvent, CustomEvent (MoveRight, Tick)) where
 
 import Brick
+import Control.Monad
 import Dataloader (Difficulty (Easy))
 import GameState
 import Graphics.Vty.Input.Events
-import Control.Monad
 
 data CustomEvent = MoveRight | Tick deriving (Show)
 
@@ -28,9 +28,9 @@ changeDistance = do
   let d = distance ts
   modify $ \s -> s {distance = if d < 90 then d + 1 else 0}
   when (d == 90) $ do
-      takeDamage
-    when (health ts <= 0) $ do
-      halt
+    takeDamage
+  when (health ts <= 0) $ do
+    halt
 
 timerTick :: EventM n TuiState ()
 timerTick = do
@@ -40,7 +40,7 @@ timerTick = do
   let a = fst (announcement ts)
   modify $ \s -> s {announcement = if a > 0 then (a - 1, snd (announcement ts)) else (0, "")}
   when (t == 0) $ do
-      increaseLevel 
+    increaseLevel
 
 addUserInput :: Char -> EventM n TuiState ()
 addUserInput c = do
@@ -130,17 +130,20 @@ takeDamage = do
   currentState <- get
   put
     ( TuiState
-        { tuiStateTarget = head (remainingWords currentState),
+        { tuiStateTarget = [head (remainingWords currentState)],
           tuiStateInput = tuiStateInput currentState,
           currentScore = currentScore currentState,
           remainingWords = tail (remainingWords currentState),
           timer = timer currentState,
           distance = 0,
           level = level currentState,
-          health = health currentState - 0.1
+          health = health currentState - 0.1,
+          difficultyLevel = difficultyLevel currentState,
+          announcement = announcement currentState
         }
     )
-increaseLevel :: EventM n TuiState () -- increases level and resets timer 
+
+increaseLevel :: EventM n TuiState () -- increases level and resets timer
 increaseLevel = do
   currentState <- get
   put
@@ -152,6 +155,8 @@ increaseLevel = do
           timer = 30,
           distance = 0,
           level = level currentState + 1,
-          health = 1.0
+          health = 1.0,
+          difficultyLevel = difficultyLevel currentState,
+          announcement = announcement currentState
         }
     )

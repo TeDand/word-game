@@ -2,13 +2,17 @@ module RenderState (drawTui) where
 
 import Attributes
 import Brick
+import Brick.Widgets.Center
 import qualified Brick.Widgets.ProgressBar as P
 import GameState
 import Ships
 
 drawTui :: TuiState -> [Widget ResourceName]
-drawTui ts 
-  | health ts <= 0 = renderLossState ts
+drawTui ts
+  | abs (health ts) <= 0.1 = renderGameOverState ts
+  | otherwise = case remainingWords ts of
+      _ : _ -> renderOngoingGameState ts
+      [] -> renderGameEndState ts
 
   | remainingWords ts == [] = renderGameEndState ts
   | otherwise = renderOngoingGameState ts
@@ -16,16 +20,16 @@ drawTui ts
 renderOngoingGameState :: TuiState  -> [Widget ResourceName]
 renderOngoingGameState ts = [a]
   where
+    inputWord = if tuiStateInput ts == "" then " " else tuiStateInput ts
+    targetWord = tuiStateTarget ts
+    ann = if fst (announcement ts) /= 0 then snd (announcement ts) else " "
     a =
       (str $ "Level: " <> (show $ (level ts)))
         <=> (str $ "Time Left: " <> (show $ (timer ts)))
         <=> enemyShip ts targetWord
-        <=> str inputWord
-        <=> padTop (Pad 3) (getHealth ts)
-    inputWord = if tuiStateInput ts == "" then " " else tuiStateInput ts
-    targetWord = tuiStateTarget ts
-
-
+        <=> hCenter (withAttr inputAttr (str inputWord))
+        <=> hCenter (withAttr announcementAttr (str ann))
+        <=> padTop (Pad 5) (getHealth ts)
 
 getHealth :: TuiState -> Widget ResourceName
 getHealth st = ui
@@ -44,26 +48,32 @@ getHealth st = ui
     ui =
       (str "Health: " <+> healthBar)
 
-enemyShip :: TuiState -> String -> Widget ResourceName
-enemyShip ts word =
+enemyShip :: TuiState -> [String] -> Widget ResourceName
+enemyShip ts wordsToShow =
   padTop
     (Pad 2)
-    (   evilShip
-        <+>
-        streamWords ts word
+    ( evilShip
+        <+> 
+        enemyShipHelper ts wordsToShow
         <+> ship
     )
-streamWords :: TuiState -> String -> Widget ResourceName -- somehow have to get random generation and different words created
-streamWords ts word = (str $ replicate ((distance ts)) ' ' <> word) 
-                  <=> (str $ replicate ((distance ts)) ' ' <> word)
-                   <=> (str $ replicate ((distance ts)) ' ' <> word)
-                   <=> (str $ replicate ((distance ts)) ' ' <> word)
-                   <=> (str $ replicate ((distance ts)) ' ' <> word)
-                   <=> (str $ replicate ((distance ts)) ' ' <> word)
-                   <=> (str $ replicate ((distance ts)) ' ' <> word)
+
+enemyShipHelper :: TuiState -> [String] -> Widget ResourceName
+enemyShipHelper _ [] = str ""
+enemyShipHelper ts wordsToShow = highlightMatchingPart (distance ts) (head wordsToShow) (tuiStateInput ts) <=> str "\n" <=> enemyShipHelper ts (tail wordsToShow)
+
+highlightMatchingPart :: Int -> String -> String -> Widget ResourceName
+highlightMatchingPart dist target input =
+  str (replicate (dist - 1) ' ') <+> go target input emptyWidget
+  where
+    go [] _ acc = acc
+    go remaining [] acc = acc <+> str remaining
+    go (t : ts) (i : is) acc
+      | t == i = go ts is (acc <+> withAttr matchingAttr (str [t]))
+      | otherwise = go ts (replicate (length is) ' ') (acc <+> str [t]) -- Space or another character to indicate non-matching part
 
 renderGameEndState :: TuiState -> [Widget ResourceName]
 renderGameEndState ts = [str "You have beaten the game! Your final score is: " <+> str (show $ currentScore ts)]
 
-renderLossState :: TuiState -> [Widget ResourceName]
-renderLossState ts = [gameOver <=> str ("Your final score is: " <> (show $ currentScore ts))]
+renderGameOverState :: TuiState -> [Widget ResourceName]
+renderGameOverState ts = [gameOver <=> str "You have lost the game! Your final score is: " <+> str (show $ currentScore ts)]

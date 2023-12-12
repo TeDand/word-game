@@ -5,13 +5,13 @@ import Brick
 import Brick.BChan
 import Control.Concurrent
 import Control.Monad
-import Dataloader (loadWords)
+import Dataloader (loadWords, Difficulty (Easy, Hard, Nightmare))
 import EventHandler
 import GameState
 import RenderState
 
-tui :: IO ()
-tui = do
+tui :: Difficulty -> IO Int
+tui diff = do
   chan <- newBChan 10
 
   void $ forkIO $ forever $ do
@@ -20,10 +20,10 @@ tui = do
   void $ forkIO $ forever $ do
     writeBChan chan Tick
     threadDelay 1000000 -- game timer
-  initialState <- buildInitialState
+  initialState <- buildInitialState diff
   void $ customMainWithDefaultVty (Just chan) tuiApp initialState
   endState <- defaultMain tuiApp initialState
-  print endState
+  return (currentScore endState)
 
 -- return $ currentScore endState
 
@@ -37,29 +37,65 @@ tuiApp =
       appAttrMap = gameMap
     }
 
+buildInitialState :: Difficulty -> IO TuiState
+buildInitialState difficulty = case difficulty of
+  Easy -> buildEasyInitialState
+  Hard -> buildHardInitialState
+  Nightmare -> buildNightmareInitialState
 
+buildEasyInitialState :: IO TuiState
+buildEasyInitialState = do
+  -- Easy: Just one word
+    wordsToType <- loadWords Easy-- Add difficulty of words later
+    return
+      TuiState
+        { tuiStateTarget = [head wordsToType],
+          tuiStateInput = "",
+          remainingWords = tail wordsToType,
+          currentScore = 0,
+          timer = 20,
+          distance = 0,
+          level = 1,
+          health = 1.0,
+          announcement = (0, ""),
+          difficultyLevel = Easy
+        }
 
-buildInitialState :: IO TuiState
-buildInitialState = do
-  wordsToType <- loadWords
-  return
-    TuiState
-      { tuiStateTarget = head wordsToType,
-        tuiStateInput = "",
-        remainingWords = tail wordsToType,
-        currentScore = 0,
-        timer = 30,
-        distance = 0,
-        level = 1,
-        health = 1.0
-      }
+buildHardInitialState :: IO TuiState
+buildHardInitialState = do
+  -- Hard: 3 different words. Need to type all 3 to destroy all 3. 
+  -- But the words should be reasonably short
+    wordsToType <- loadWords Hard
+    return
+      TuiState
+        { tuiStateTarget = [head wordsToType, wordsToType !! 1, wordsToType !! 2],
+          tuiStateInput = "",
+          remainingWords = drop 3 wordsToType,
+          currentScore = 0,
+          timer = 20,
+          distance = 0,
+          level = 1,
+          health = 1.0,
+          announcement = (0, ""),
+          difficultyLevel = Hard
+        }
 
-
-
-
-
-
-
-  
-
-
+buildNightmareInitialState :: IO TuiState
+buildNightmareInitialState = do
+  -- Nightmare: 3 different words. Need to type all 3 to destroy all 3. 
+  -- The words are ridiculous and nonsensical compared to hard
+  -- Might also want to lower the timer
+    wordsToType <- loadWords Nightmare
+    return
+      TuiState
+        { tuiStateTarget = [head wordsToType, wordsToType !! 1, wordsToType !! 2],
+          tuiStateInput = "",
+          remainingWords = drop 3 wordsToType,
+          currentScore = 0,
+          timer = 20,
+          distance = 0,
+          level = 1,
+          health = 1.0,
+          announcement = (0, ""),
+          difficultyLevel = Nightmare
+        }

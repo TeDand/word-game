@@ -45,14 +45,19 @@ getHealth st = ui
     ui =
       str "Health: " <+> healthBar
 
-enemyShip :: TuiState -> String -> Widget ResourceName
-enemyShip ts word =
+enemyShip :: TuiState -> [String] -> Widget ResourceName
+enemyShip ts wordsToShow =
   padTop
     (Pad 2)
     ( evilShip
-        <+> highlightMatchingPart (distance ts) word (tuiStateInput ts)
+        <+> 
+        enemyShipHelper ts wordsToShow
         <+> ship
     )
+
+enemyShipHelper :: TuiState -> [String] -> Widget ResourceName
+enemyShipHelper _ [] = str ""
+enemyShipHelper ts wordsToShow = highlightMatchingPart (distance ts) (head wordsToShow) (tuiStateInput ts) <=> str "\n" <=> enemyShipHelper ts (tail wordsToShow)
 
 highlightMatchingPart :: Int -> String -> String -> Widget ResourceName
 highlightMatchingPart dist target input =

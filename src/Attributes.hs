@@ -9,12 +9,13 @@ gameMap :: TuiState -> AttrMap
 gameMap _ =
   attrMap
     defAttr
-    [ (inputAttr, fg yellow),
+    [ (attrName "input", fg yellow),
       (theBaseAttr, bg brightBlack),
       (healthDoneAttr, blue `on` green),
       (healthToDoAttr, blue `on` red),
-      (progressIncompleteAttr, fg yellow)
+      (P.progressIncompleteAttr, fg yellow)
     ]
+  
 
 inputAttr :: AttrName
 inputAttr = attrName "input"

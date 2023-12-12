@@ -16,7 +16,7 @@ tui = do
 
   void $ forkIO $ forever $ do
     writeBChan chan MoveRight
-    threadDelay 100000 -- enemy
+    threadDelay 100000  -- enemy
   void $ forkIO $ forever $ do
     writeBChan chan Tick
     threadDelay 1000000 -- game timer
@@ -37,6 +37,8 @@ tuiApp =
       appAttrMap = gameMap
     }
 
+
+
 buildInitialState :: IO TuiState
 buildInitialState = do
   wordsToType <- loadWords
@@ -51,3 +53,13 @@ buildInitialState = do
         level = 1,
         health = 1.0
       }
+
+
+
+
+
+
+
+  
+
+

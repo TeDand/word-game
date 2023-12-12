@@ -14,15 +14,18 @@ drawTui ts
       _ : _ -> renderOngoingGameState ts
       [] -> renderGameEndState ts
 
-renderOngoingGameState :: TuiState -> [Widget ResourceName]
+  | remainingWords ts == [] = renderGameEndState ts
+  | otherwise = renderOngoingGameState ts
+
+renderOngoingGameState :: TuiState  -> [Widget ResourceName]
 renderOngoingGameState ts = [a]
   where
     inputWord = if tuiStateInput ts == "" then " " else tuiStateInput ts
     targetWord = tuiStateTarget ts
     ann = if fst (announcement ts) /= 0 then snd (announcement ts) else " "
     a =
-      str ("Level: " <> show (level ts))
-        <=> str ("Time Left: " <> show (timer ts))
+      (str $ "Level: " <> (show $ (level ts)))
+        <=> (str $ "Time Left: " <> (show $ (timer ts)))
         <=> enemyShip ts targetWord
         <=> hCenter (withAttr inputAttr (str inputWord))
         <=> hCenter (withAttr announcementAttr (str ann))
@@ -34,8 +37,8 @@ getHealth st = ui
     healthBar =
       updateAttrMap
         ( mapAttrNames
-            [ (healthDoneAttr, progressCompleteAttr),
-              (healthToDoAttr, progressIncompleteAttr)
+            [ (healthDoneAttr, P.progressCompleteAttr),
+              (healthToDoAttr, P.progressIncompleteAttr)
             ]
         )
         $ bar
@@ -43,7 +46,7 @@ getHealth st = ui
     lbl c = Just $ show $ fromEnum $ c * 100
     bar v = P.progressBar (lbl v) v
     ui =
-      str "Health: " <+> healthBar
+      (str "Health: " <+> healthBar)
 
 enemyShip :: TuiState -> [String] -> Widget ResourceName
 enemyShip ts wordsToShow =
@@ -73,4 +76,4 @@ renderGameEndState :: TuiState -> [Widget ResourceName]
 renderGameEndState ts = [str "You have beaten the game! Your final score is: " <+> str (show $ currentScore ts)]
 
 renderGameOverState :: TuiState -> [Widget ResourceName]
-renderGameOverState ts = [str "You have lost the game! Your final score is: " <+> str (show $ currentScore ts)]
+renderGameOverState ts = [gameOver <=> str "You have lost the game! Your final score is: " <+> str (show $ currentScore ts)]

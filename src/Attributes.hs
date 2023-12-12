@@ -17,6 +17,7 @@ gameMap _ =
       (announcementAttr, fg red),
       (matchingAttr, fg green)
     ]
+  
 
 inputAttr :: AttrName
 inputAttr = attrName "input"

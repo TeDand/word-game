@@ -21,9 +21,8 @@ makeLenses '' EnemyWord
 
 data Enemy = Enemy {
      _enemyWord :: EnemyWord
-    , _health :: Int
-    , _damage :: Float
     , _distance :: Int
+    , _row :: Int
 
 }
 makeLenses '' Enemy

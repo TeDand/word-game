@@ -16,7 +16,7 @@ tui diff = do
 
   void $ forkIO $ forever $ do
     writeBChan chan MoveRight
-    threadDelay 100000 -- enemy
+    threadDelay 100000  -- enemy
   void $ forkIO $ forever $ do
     writeBChan chan Tick
     threadDelay 1000000 -- game timer

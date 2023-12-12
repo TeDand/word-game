@@ -35,6 +35,7 @@ library
       Shuffle
       Tui
       Types
+      Menu
   other-modules:
       Paths_word_game
   autogen-modules:

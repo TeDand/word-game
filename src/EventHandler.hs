@@ -1,9 +1,10 @@
 module EventHandler (handleTuiEvent, CustomEvent (MoveRight, Tick)) where
 
 import Brick
+import Control.Monad
+import Dataloader (Difficulty (Easy))
 import GameState
 import Graphics.Vty.Input.Events
-import Dataloader (Difficulty (Easy, Hard, Nightmare))
 
 data CustomEvent = MoveRight | Tick deriving (Show)
 
@@ -21,17 +22,25 @@ handleTuiEvent e = case e of
     _ -> return ()
   _ -> return ()
 
-changeDistance :: EventM n TuiState()
+changeDistance :: EventM n TuiState ()
 changeDistance = do
-    ts <- get
-    let d = distance ts
-    modify $ \s -> s {distance = if d < 90 then d + 1 else 0}
+  ts <- get
+  let d = distance ts
+  modify $ \s -> s {distance = if d < 90 then d + 1 else 0}
+  when (d == 90) $ do
+    takeDamage
+  when (health ts <= 0) $ do
+    halt
 
-timerTick :: EventM n TuiState()
+timerTick :: EventM n TuiState ()
 timerTick = do
-    ts <- get
-    let t = timer ts
-    modify $ \s -> s {timer = if t > 0 then t - 1 else 0}
+  ts <- get
+  let t = timer ts
+  modify $ \s -> s {timer = if t > 0 then t - 1 else 0}
+  let a = fst (announcement ts)
+  modify $ \s -> s {announcement = if a > 0 then (a - 1, snd (announcement ts)) else (0, "")}
+  when (t == 0) $ do
+    increaseLevel
 
 addUserInput :: Char -> EventM n TuiState ()
 addUserInput c = do
@@ -52,10 +61,11 @@ verifyInputAgainstWord = do
 
 verifyEasyInput :: EventM n TuiState ()
 -- For easy mode, we just compare to the first word, since the word is replicated 3 times
-verifyEasyInput = do 
-  currentState <- get;
-    if head (tuiStateTarget currentState) == tuiStateInput currentState
+verifyEasyInput = do
+  currentState <- get
+  if head (tuiStateTarget currentState) == tuiStateInput currentState
     then -- User has input the words correctly
+
       put
         ( TuiState
             { tuiStateTarget = [head (remainingWords currentState)],
@@ -63,29 +73,35 @@ verifyEasyInput = do
               currentScore = currentScore currentState + 1,
               remainingWords = tail (remainingWords currentState),
               timer = timer currentState,
-              distance = 90, --the initial distance, might want to remove magic number
+              distance = 0,
               level = level currentState,
               health = health currentState,
+              announcement = (0, ""),
               difficultyLevel = difficultyLevel currentState
             }
         )
-    else -- Incorrect; reset the input tracker
-    modify $ \s -> s {tuiStateInput = ""}
-  
+    else do
+      -- Incorrect; reset the input tracker
+      modify $ \s -> s {tuiStateInput = ""}
+      modify $ \s -> s {announcement = (2, "INCORRECT INPUT!")}
+      takeDamage
+
 verifyNotEasyInput :: EventM n TuiState ()
 -- For easy mode, we just compare to the first word
-verifyNotEasyInput = do 
-  currentState <- get;
-    if head (tuiStateTarget currentState) == tuiStateInput currentState
+verifyNotEasyInput = do
+  currentState <- get
+  if head (tuiStateTarget currentState) == tuiStateInput currentState
     then -- User has input the words correctly
+
       if length (tuiStateTarget currentState) > 1
-        then
-          -- there are more words to type in this volley. remove one word,
-          modify $ \s -> s {tuiStateTarget = tail (tuiStateTarget s),
-                            tuiStateInput = ""
-                          }
-        else
-          -- there are no more words to type in this volley. Go to the next volley!
+        then -- there are more words to type in this volley. remove one word,
+        modify $ \s ->
+          s
+            { tuiStateTarget = tail (tuiStateTarget s),
+              tuiStateInput = ""
+            }
+        else -- there are no more words to type in this volley. Go to the next volley!
+
           put
             ( TuiState
                 { tuiStateTarget = getNextVolleyOfWords (remainingWords currentState),
@@ -96,11 +112,51 @@ verifyNotEasyInput = do
                   distance = 90,
                   level = level currentState,
                   health = health currentState,
+                  announcement = (0, ""),
                   difficultyLevel = difficultyLevel currentState
                 }
             )
-    else -- Incorrect; reset the input tracker
-    modify $ \s -> s {tuiStateInput = ""}
+    else do
+      -- Incorrect; reset the input tracker
+      modify $ \s -> s {tuiStateInput = ""}
+      modify $ \s -> s {announcement = (2, "INCORRECT INPUT!")}
+      takeDamage
 
 getNextVolleyOfWords :: [String] -> [String]
-getNextVolleyOfWords wordsList = [head wordsList , wordsList !! 1, wordsList !! 2] 
+getNextVolleyOfWords wordsList = [head wordsList, wordsList !! 1, wordsList !! 2]
+
+takeDamage :: EventM n TuiState ()
+takeDamage = do
+  currentState <- get
+  put
+    ( TuiState
+        { tuiStateTarget = [head (remainingWords currentState)],
+          tuiStateInput = tuiStateInput currentState,
+          currentScore = currentScore currentState,
+          remainingWords = tail (remainingWords currentState),
+          timer = timer currentState,
+          distance = 0,
+          level = level currentState,
+          health = health currentState - 0.1,
+          difficultyLevel = difficultyLevel currentState,
+          announcement = announcement currentState
+        }
+    )
+
+increaseLevel :: EventM n TuiState () -- increases level and resets timer
+increaseLevel = do
+  currentState <- get
+  put
+    ( TuiState
+        { tuiStateTarget = tuiStateTarget currentState,
+          tuiStateInput = "",
+          currentScore = currentScore currentState,
+          remainingWords = remainingWords currentState,
+          timer = 30,
+          distance = 0,
+          level = level currentState + 1,
+          health = 1.0,
+          difficultyLevel = difficultyLevel currentState,
+          announcement = announcement currentState
+        }
+    )

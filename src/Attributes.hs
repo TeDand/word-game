@@ -13,7 +13,9 @@ gameMap _ =
       (theBaseAttr, bg brightBlack),
       (healthDoneAttr, blue `on` green),
       (healthToDoAttr, blue `on` red),
-      (progressIncompleteAttr, fg yellow)
+      (progressIncompleteAttr, fg yellow),
+      (announcementAttr, fg red),
+      (matchingAttr, fg green)
     ]
 
 inputAttr :: AttrName
@@ -31,3 +33,9 @@ progressIncompleteAttr = P.progressCompleteAttr
 
 progressCompleteAttr :: AttrName
 progressCompleteAttr = P.progressCompleteAttr
+
+announcementAttr :: AttrName
+announcementAttr = attrName "announcement"
+
+matchingAttr :: AttrName
+matchingAttr = attrName "matching"

@@ -32,6 +32,8 @@ timerTick = do
     ts <- get
     let t = timer ts
     modify $ \s -> s {timer = if t > 0 then t - 1 else 0}
+    let a = fst (announcement ts)
+    modify $ \s -> s {announcement = if a > 0 then (a - 1, snd (announcement ts)) else (0, "")}
 
 addUserInput :: Char -> EventM n TuiState ()
 addUserInput c = do
@@ -71,6 +73,8 @@ verifyEasyInput = do
         )
     else -- Incorrect; reset the input tracker
     modify $ \s -> s {tuiStateInput = ""}
+    modify $ \s -> s {announcement = (2, "INCORRECT INPUT!")}
+    modify $ \s -> s {health = health s - 0.2}
   
 verifyNotEasyInput :: EventM n TuiState ()
 -- For easy mode, we just compare to the first word
@@ -101,6 +105,8 @@ verifyNotEasyInput = do
             )
     else -- Incorrect; reset the input tracker
     modify $ \s -> s {tuiStateInput = ""}
+    modify $ \s -> s {announcement = (2, "INCORRECT INPUT!")}
+    modify $ \s -> s {health = health s - 0.2}
 
 getNextVolleyOfWords :: [String] -> [String]
 getNextVolleyOfWords wordsList = [head wordsList , wordsList !! 1, wordsList !! 2] 

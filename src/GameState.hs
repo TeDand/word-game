@@ -11,6 +11,7 @@ data TuiState = TuiState
     level :: Int,
     health :: Float,
     difficultyLevel :: Difficulty
+    announcement :: (Int, String)
   }
   deriving (Show, Eq)
 

@@ -57,6 +57,7 @@ buildEasyInitialState = do
           distance = 0,
           level = 1,
           health = 1.0,
+          announcement = (0, ""),
           difficultyLevel = Easy
         }
 
@@ -75,6 +76,7 @@ buildHardInitialState = do
           distance = 0,
           level = 1,
           health = 1.0,
+          announcement = (0, ""),
           difficultyLevel = Hard
         }
 
@@ -94,5 +96,6 @@ buildNightmareInitialState = do
           distance = 0,
           level = 1,
           health = 1.0,
+          announcement = (0, ""),
           difficultyLevel = Nightmare
         }

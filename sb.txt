@@ -4,7 +4,9 @@
 "nfewuwe" 3
 "woof" 3
 "meow" 3
-"\DEL\DELN" 0
+"Ni" 0
+"ds" 0
+"\\\\DEL\\\\DELN" 0
 "oi" 0
 "oymo" 0
 "eeewwwee" 0

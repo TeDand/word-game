@@ -29,6 +29,7 @@ library
       Dataloader
       EventHandler
       GameState
+      Menu
       RenderState
       Scoreboard
       Ships

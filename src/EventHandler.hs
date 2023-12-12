@@ -28,7 +28,7 @@ changeDistance = do
   let d = distance ts
   modify $ \s -> s {distance = if d < 90 then d + 1 else 0}
   when (d == 90) $ do
-    takeDamage
+    takeDamage False
   when (health ts <= 0) $ do
     halt
 
@@ -84,7 +84,7 @@ verifyEasyInput = do
       -- Incorrect; reset the input tracker
       modify $ \s -> s {tuiStateInput = ""}
       modify $ \s -> s {announcement = (2, "INCORRECT INPUT!")}
-      takeDamage
+      takeDamage True
 
 verifyNotEasyInput :: EventM n TuiState ()
 -- For easy mode, we just compare to the first word
@@ -120,22 +120,22 @@ verifyNotEasyInput = do
       -- Incorrect; reset the input tracker
       modify $ \s -> s {tuiStateInput = ""}
       modify $ \s -> s {announcement = (2, "INCORRECT INPUT!")}
-      takeDamage
+      takeDamage True
 
 getNextVolleyOfWords :: [String] -> [String]
 getNextVolleyOfWords wordsList = [head wordsList, wordsList !! 1, wordsList !! 2]
 
-takeDamage :: EventM n TuiState ()
-takeDamage = do
+takeDamage :: Bool -> EventM n TuiState ()
+takeDamage incorrectWord = do
   currentState <- get
   put
     ( TuiState
-        { tuiStateTarget = getNextVolleyOfWords (remainingWords currentState),
+        { tuiStateTarget = if incorrectWord then tuiStateTarget currentState else getNextVolleyOfWords (remainingWords currentState),
           tuiStateInput = tuiStateInput currentState,
           currentScore = currentScore currentState,
-          remainingWords = drop 3 (remainingWords currentState),
+          remainingWords = if incorrectWord then remainingWords currentState else drop 3 (remainingWords currentState),
           timer = timer currentState,
-          distance = 0,
+          distance = if incorrectWord then distance currentState else 0,
           level = level currentState,
           health = health currentState - 0.1 * fromIntegral (length (tuiStateTarget currentState)),
           difficultyLevel = difficultyLevel currentState,
@@ -155,7 +155,7 @@ increaseLevel = do
           timer = 30,
           distance = 0,
           level = level currentState + 1,
-          health = health currentState, 
+          health = health currentState,
           difficultyLevel = difficultyLevel currentState,
           announcement = announcement currentState
         }

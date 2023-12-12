@@ -130,14 +130,14 @@ takeDamage = do
   currentState <- get
   put
     ( TuiState
-        { tuiStateTarget = [head (remainingWords currentState)],
+        { tuiStateTarget = getNextVolleyOfWords (remainingWords currentState),
           tuiStateInput = tuiStateInput currentState,
           currentScore = currentScore currentState,
-          remainingWords = tail (remainingWords currentState),
+          remainingWords = drop 3 (remainingWords currentState),
           timer = timer currentState,
           distance = 0,
           level = level currentState,
-          health = health currentState - 0.1,
+          health = health currentState - 0.1 * fromIntegral (length (tuiStateTarget currentState)),
           difficultyLevel = difficultyLevel currentState,
           announcement = announcement currentState
         }
@@ -155,7 +155,7 @@ increaseLevel = do
           timer = 30,
           distance = 0,
           level = level currentState + 1,
-          health = 1.0,
+          health = health currentState, 
           difficultyLevel = difficultyLevel currentState,
           announcement = announcement currentState
         }

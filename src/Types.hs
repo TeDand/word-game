@@ -13,22 +13,10 @@
 module Types where
 import Control.Lens
 import qualified Data.Text                     as T
-data EnemyWord = EnemyWord {
-     _typed :: T.Text
-    , _untype :: T.Text
-}
-makeLenses '' EnemyWord
 
 data Enemy = Enemy {
-     _enemyWord :: EnemyWord
+     _enemyWord :: String
     , _distance :: Int
     , _row :: Int
 
 }
-makeLenses '' Enemy
-
-data Health = Health {
-     _healthValue :: Float
-    , _healthMax :: Float
-}
-makeLenses '' Health

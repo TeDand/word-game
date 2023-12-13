@@ -5,9 +5,12 @@ where
 
 import System.Random
 
-shuffle :: [String] -> [String] -> IO [String]
-shuffle [] y = return y
-shuffle x y = do
+shuffle :: [String] -> IO [String]
+shuffle x = imp x []
+
+imp :: [String] -> [String] -> IO [String]
+imp [] y = return y
+imp x y = do
     n <- randomRIO (0,(length x) - 1)
     let (a,b) = splitAt n x
-    shuffle (a ++ tail b) ((x!!n):y)
+    imp (a ++ tail b) ((x!!n):y)

@@ -54,6 +54,7 @@ removeUserInput = do
 
 verifyInputAgainstWord :: EventM n TuiState ()
 verifyInputAgainstWord = do
+  checkDead
   currentState <- get
   case difficultyLevel currentState of
     Easy -> verifyEasyInput
@@ -141,6 +142,15 @@ takeDamage incorrectWord = do
           announcement = announcement currentState
         }
     )
+  checkDead
+
+checkDead :: EventM n TuiState ()
+checkDead = do
+  newState <- get
+  if health newState <=0 then
+    halt
+  else
+    put newState
 
 increaseLevel :: EventM n TuiState () -- increases level and resets timer
 increaseLevel = do
@@ -159,3 +169,4 @@ increaseLevel = do
           announcement = announcement currentState
         }
     )
+  checkDead

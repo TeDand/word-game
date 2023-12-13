@@ -4,6 +4,7 @@ module Menu
 where
 
 import Brick
+import Brick.Widgets.Center
 import Dataloader
 import qualified Graphics.Vty as V
 import Scoreboard
@@ -17,10 +18,10 @@ tr x = str x
 
 fm :: Int -> Difficulty
 fm i = case i of
-  1 -> Easy
-  2 -> Hard
-  3 -> Nightmare
-  _ -> error "impossibile difficulty level"
+        1 -> Easy
+        2 -> Hard
+        3 -> Nightmare
+        _ -> error "Please choose a valid difficulty level"
 
 menu :: Int -> IO ()
 menu i = do
@@ -33,7 +34,7 @@ menu i = do
       if n /= "" then writeScoreboard (addNewScore sb n s) else return ()
       menu i
     "s" -> do
-      simpleMain $ tr $ "press any key to quit\n" ++ show sb
+      simpleMain $ hCenter (tr $ sbMenu (show sb))
       menu i
     "o" -> do
       d <- defaultMain diffApp i
@@ -41,18 +42,36 @@ menu i = do
     "q" -> return ()
     _ -> error "?"
 
+sbMenu :: String -> String
+sbMenu scores =
+  "╔═══════════════════════════════════╗\n\
+  \║           Scoreboard              ║\n\
+  \╚═══════════════════════════════════╝\n\
+  \ \n"
+    ++ scores
+    ++ "\
+       \ \n\
+       \═════════════════════════════════════"
+
 top :: String
 top =
-  "Hello, welcome to Wordgame!\n\
-  \press b to begin playing\n\
-  \press s to see the scoreboard\n\
-  \press o to change options (difficulty)\n\
-  \press q to quit."
+  "╔═══════════════════════════════════╗\n\
+  \║         Wordgame Main Menu        ║\n\
+  \╚═══════════════════════════════════╝\n\
+  \ \n\
+  \    • Press 'b' to begin the game\n\
+  \    • Press 's' to see the scoreboard\n\
+  \    • Press 'o' to change options\n\
+  \    • Press 'q' to quit\n\
+  \ \n\
+  \═════════════════════════════════════"
+
+
 
 topApp :: App String e ()
 topApp =
   App
-    { appDraw = const [str top],
+    { appDraw = const [hCenter (str top)],
       appHandleEvent = topHandle,
       appStartEvent = return (),
       appAttrMap = const $ attrMap V.defAttr [],
@@ -68,15 +87,21 @@ topHandle _ = continueWithoutRedraw
 
 name :: String
 name =
-  "Thank you for playing.\n\
-  \Type your name to save your score in the scoreboard.\n\
-  \Press esc when you finish typing.\n\
-  \If you don't want to save your score, press esc without typing your name.\n"
+  "╔══════════════════════════════════════════════════╗\n\
+  \║               Thank you for playing!             ║\n\
+  \╚══════════════════════════════════════════════════╝\n\
+  \ \n\
+  \• Type your name to save your score.\n\
+  \• Click 'esc' when you finish.\n\
+  \• If you don't want to save your score, press 'esc'.\n\
+  \ \n\
+  \═══════════════════════════════════════════════════"
+
 
 nameApp :: App String e String
 nameApp =
   App
-    { appDraw = \s -> [str name <=> str s],
+    { appDraw = \s -> [hCenter (str name <=> str s)],
       appHandleEvent = nameHandle,
       appStartEvent = return (),
       appAttrMap = const $ attrMap V.defAttr [],
@@ -90,16 +115,22 @@ nameHandle _ = continueWithoutRedraw
 
 diff :: String
 diff =
-  "Input a number to select the difficulty level\n\
-  \1: Easy\n\
-  \2: Hard\n\
-  \3: Nightmare\n\
-  \Press esc to cancel."
+  "╔══════════════════════════════════════════════╗\n\
+  \║             Select Difficulty Level          ║\n\
+  \╚══════════════════════════════════════════════╝\n\
+  \ \n\
+  \• Input a number to select the difficulty level:\n\
+  \  1: Easy\n\
+  \  2: Hard\n\
+  \  3: Nightmare\n\
+  \• Press 'esc' to cancel.\n\
+  \ \n\
+  \════════════════════════════════════════════════"
 
 diffApp :: App Int e ()
 diffApp =
   App
-    { appDraw = const [str diff],
+    { appDraw = const [hCenter (str diff)],
       appHandleEvent = diffHandle,
       appStartEvent = return (),
       appAttrMap = const $ attrMap V.defAttr [],

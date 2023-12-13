@@ -35,7 +35,6 @@ library
       Ships
       Shuffle
       Tui
-      Types
   other-modules:
       Paths_word_game
   autogen-modules:

@@ -56,7 +56,7 @@ enemyShip ts wordsToShow wordDistances =
 enemyShipHelper :: TuiState -> [String] -> [Int] -> Widget ResourceName
 -- enemyShipHelper _ [] _  = str ""
 enemyShipHelper ts (w:ws) (d:ds) = highlightMatchingPart (d) (w) (tuiStateInput ts) <=> str "\n" <=> enemyShipHelper ts ws ds
-enemyShipHelper _ _ _ = str "lakd"
+enemyShipHelper _ _ _ = str ""
 
 highlightMatchingPart :: Int -> String -> String -> Widget ResourceName
 highlightMatchingPart dist target input =

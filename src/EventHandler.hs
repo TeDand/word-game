@@ -159,7 +159,7 @@ takeDamage hits = do
   checkDead
 
 boolToDistance :: [Bool] -> [Int] -> [Int]
-boolToDistance (b:bs) (d:ds) = if b == True then [0] else d: boolToDistance bs ds
+boolToDistance (b:bs) (d:ds) = if b == True then 0 : boolToDistance bs ds else d: boolToDistance bs ds
 boolToDistance _ _ = []
 
 countBools :: [Bool] -> Int

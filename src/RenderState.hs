@@ -27,7 +27,7 @@ renderOngoingGameState ts = [a]
         <=> enemyShip ts targetWord wordDistances
         <=> hCenter (withAttr inputAttr (str inputWord))
         <=> hCenter (withAttr announcementAttr (str ann))
-        <=> padTop (Pad 5) (getHealth ts)
+        <=> padTop (Pad 3) (getHealth ts)
 
 getHealth :: TuiState -> Widget ResourceName
 getHealth st = ui

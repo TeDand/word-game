@@ -29,13 +29,13 @@ library
       Dataloader
       EventHandler
       GameState
+      Menu
       RenderState
       Scoreboard
       Ships
       Shuffle
       Tui
       Types
-      Menu
   other-modules:
       Paths_word_game
   autogen-modules:

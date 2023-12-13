@@ -22,7 +22,7 @@ renderOngoingGameState ts = [a]
     wordDistances = distance ts
     ann = if fst (announcement ts) /= 0 then snd (announcement ts) else " "
     a =
-      str ("Time Left: " <> show (timer ts))
+      str ("Time Survived: " <> show (timer ts))
         <=> enemyShip ts targetWord wordDistances
         <=> hCenter (withAttr inputAttr (str inputWord))
         <=> hCenter (withAttr announcementAttr (str ann))
@@ -56,7 +56,7 @@ enemyShip ts wordsToShow wordDistances =
 
 enemyShipHelper :: TuiState -> [String] -> [Int] -> Widget ResourceName
 -- enemyShipHelper _ [] _  = str ""
-enemyShipHelper ts (w : ws) (d : ds) = highlightMatchingPart (d) (w) (tuiStateInput ts) <=> str "\n" <=> enemyShipHelper ts ws ds
+enemyShipHelper ts (w : ws) (d : ds) = highlightMatchingPart d w (tuiStateInput ts) <=> str "\n" <=> enemyShipHelper ts ws ds
 enemyShipHelper _ _ _ = str ""
 
 highlightMatchingPart :: Int -> String -> String -> Widget ResourceName
@@ -73,4 +73,5 @@ renderGameEndState :: TuiState -> [Widget ResourceName]
 renderGameEndState ts = [str "You have beaten the game! Your final score is: " <+> str (show $ currentScore ts) <=> str "Press esc to continue"]
 
 renderGameOverState :: TuiState -> [Widget ResourceName]
-renderGameOverState ts = [gameOver <=> (str "You have lost the game! Your final score is: " <+> str (show $ currentScore ts)) <=> str "Press esc to continue"]
+renderGameOverState ts = [hCenter (gameOver <=> str " " <=> str " " <=> (str "You have lost the game! Your final score is: " <+> str (show $ currentScore ts)))]
+

@@ -17,9 +17,8 @@ import Menu
 
 main :: IO ()
 main = menu 1
-
--- do
--- w <- loadWords Hard
--- w <- (return ["abc","def","xyz"])
--- sw <- shuffle w
--- print(sw)
+    -- do
+    -- w <- loadWords Hard
+    -- w <- (return ["abc","def","xyz"])
+    -- sw <- shuffle w
+    -- print(sw)

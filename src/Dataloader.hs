@@ -1,5 +1,6 @@
 module Dataloader (loadWords, Difficulty (Easy, Hard, Nightmare)) where
 
+import Shuffle
 import System.IO
 import System.Random
 
@@ -12,7 +13,7 @@ loadWords diff = case diff of
     return all_words
   _ -> do
     all_words <- loadFile "data/words.txt"
-    return (lines all_words)
+    shuffle $ lines all_words
 
 -- Function to generate a random string of a given length
 randomString :: Int -> IO String

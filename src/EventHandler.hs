@@ -50,8 +50,10 @@ addUserInput c = do
 
 removeUserInput :: EventM n TuiState ()
 removeUserInput = do
-  _ <- get
-  modify $ \s -> s {tuiStateInput = init (tuiStateInput s)}
+  ts <- get
+  if tuiStateInput ts == ""
+    then return ()
+    else modify $ \s -> s {tuiStateInput = init (tuiStateInput s)}
 
 verifyInputAgainstWord :: EventM n TuiState ()
 verifyInputAgainstWord = do

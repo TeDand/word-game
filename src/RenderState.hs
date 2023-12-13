@@ -72,4 +72,4 @@ renderGameEndState :: TuiState -> [Widget ResourceName]
 renderGameEndState ts = [str "You have beaten the game! Your final score is: " <+> str (show $ currentScore ts)]
 
 renderGameOverState :: TuiState -> [Widget ResourceName]
-renderGameOverState ts = [gameOver <=> str "You have lost the game! Your final score is: " <+> str (show $ currentScore ts)]
+renderGameOverState ts = [gameOver <=> (str "You have lost the game! Your final score is: " <+> str (show $ currentScore ts))]

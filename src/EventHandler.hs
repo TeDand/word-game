@@ -54,7 +54,6 @@ removeUserInput = do
 
 verifyInputAgainstWord :: EventM n TuiState ()
 verifyInputAgainstWord = do
-  checkDead
   currentState <- get
   case difficultyLevel currentState of
     Easy -> verifyEasyInput
@@ -170,4 +169,3 @@ increaseLevel = do
           announcement = announcement currentState
         }
     )
-  checkDead

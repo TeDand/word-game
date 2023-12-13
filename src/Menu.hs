@@ -92,7 +92,7 @@ name =
   \╚══════════════════════════════════════════════════╝\n\
   \ \n\
   \• Type your name to save your score.\n\
-  \• Click 'esc' when you finish.\n\
+  \• Press 'esc' when you finish.\n\
   \• If you don't want to save your score, press 'esc'.\n\
   \ \n\
   \═══════════════════════════════════════════════════"

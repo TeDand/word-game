@@ -18,10 +18,10 @@ tr x = str x
 
 fm :: Int -> Difficulty
 fm i = case i of
-  1 -> Easy
-  2 -> Hard
-  3 -> Nightmare
-  _ -> error "impossibile difficulty level"
+        1 -> Easy
+        2 -> Hard
+        3 -> Nightmare
+        _ -> error "Please choose a valid difficulty level"
 
 menu :: Int -> IO ()
 menu i = do
@@ -66,6 +66,8 @@ top =
   \ \n\
   \═════════════════════════════════════"
 
+
+
 topApp :: App String e ()
 topApp =
   App
@@ -94,6 +96,7 @@ name =
   \• If you don't want to save your score, press 'esc'.\n\
   \ \n\
   \═══════════════════════════════════════════════════"
+
 
 nameApp :: App String e String
 nameApp =

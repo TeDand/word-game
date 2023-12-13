@@ -21,8 +21,7 @@ tui diff = do
     writeBChan chan Tick
     threadDelay 1000000 -- game timer
   initialState <- buildInitialState diff
-  void $ customMainWithDefaultVty (Just chan) tuiApp initialState
-  endState <- defaultMain tuiApp initialState
+  (endState, _)<- customMainWithDefaultVty (Just chan) tuiApp initialState
   return (currentScore endState)
 
 -- return $ currentScore endState

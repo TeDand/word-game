@@ -1,3 +1,5 @@
 "someone" 100
 "sometwo" 200
+"b" 0
+"sm" 0
 "Dre" 0

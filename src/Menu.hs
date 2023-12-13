@@ -31,7 +31,7 @@ menu i = do
             s <- tui $ fm i
             n <- nameMain $ tr name
             if n/="" then writeScoreboard (addNewScore sb n s) else return ()
-            
+            menu i
     "s" -> do
             simpleMain $ tr $ "press any key to quit\n" ++ (show sb)
             menu i

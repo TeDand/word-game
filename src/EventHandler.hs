@@ -2,6 +2,7 @@ module EventHandler (handleTuiEvent, CustomEvent (MoveRight, Tick)) where
 
 import Brick
 import Control.Monad
+import qualified Data.List as L
 import Dataloader (Difficulty (Easy))
 import GameState
 import Graphics.Vty.Input.Events
@@ -26,9 +27,11 @@ changeDistance :: EventM n TuiState ()
 changeDistance = do
   ts <- get
   let d = distance ts
-  modify $ \s -> s {distance = if d < 90 then d + 1 else 0}
-  when (d == 90) $ do
-    takeDamage False
+  modify $ \s -> s {distance = map (\dist -> if dist < 90 then dist + 1 else 0) d}
+  let word_lens = map length (tuiStateTarget ts)
+  let norm_dists = zipWith (+) (distance ts) word_lens
+  let hit = map (\dist -> dist == 90) norm_dists
+  takeDamage hit
   when (health ts <= 0) $ do
     halt
 
@@ -36,11 +39,9 @@ timerTick :: EventM n TuiState ()
 timerTick = do
   ts <- get
   let t = timer ts
-  modify $ \s -> s {timer = if t > 0 then t - 1 else 0}
+  modify $ \s -> s {timer = t + 1}
   let a = fst (announcement ts)
   modify $ \s -> s {announcement = if a > 0 then (a - 1, snd (announcement ts)) else (0, "")}
-  when (t == 0) $ do
-    increaseLevel
 
 addUserInput :: Char -> EventM n TuiState ()
 addUserInput c = do
@@ -49,12 +50,13 @@ addUserInput c = do
 
 removeUserInput :: EventM n TuiState ()
 removeUserInput = do
-  _ <- get
-  modify $ \s -> s {tuiStateInput = init (tuiStateInput s)}
+  ts <- get
+  if tuiStateInput ts == ""
+    then return ()
+    else modify $ \s -> s {tuiStateInput = init (tuiStateInput s)}
 
 verifyInputAgainstWord :: EventM n TuiState ()
 verifyInputAgainstWord = do
-  checkDead
   currentState <- get
   case difficultyLevel currentState of
     Easy -> verifyEasyInput
@@ -73,8 +75,7 @@ verifyEasyInput = do
               currentScore = currentScore currentState + 1,
               remainingWords = tail (remainingWords currentState),
               timer = timer currentState,
-              distance = 0,
-              level = level currentState,
+              distance = [0],
               health = health currentState,
               announcement = (0, ""),
               difficultyLevel = difficultyLevel currentState
@@ -84,89 +85,101 @@ verifyEasyInput = do
       -- Incorrect; reset the input tracker
       modify $ \s -> s {tuiStateInput = ""}
       modify $ \s -> s {announcement = (2, "INCORRECT INPUT!")}
-      takeDamage True
+      takeDamage []
 
 verifyNotEasyInput :: EventM n TuiState ()
 -- For easy mode, we just compare to the first word
 verifyNotEasyInput = do
   currentState <- get
-  if head (tuiStateTarget currentState) == tuiStateInput currentState
-    then -- User has input the words correctly
+  if elem (tuiStateInput currentState) (tuiStateTarget currentState)
+    then do
+      let spot = case L.elemIndex (tuiStateInput currentState) (tuiStateTarget currentState) of
+            Just num -> num
+            Nothing -> -1
 
-      if length (tuiStateTarget currentState) > 1
-        then -- there are more words to type in this volley. remove one word,
-        modify $ \s ->
-          s
-            { tuiStateTarget = tail (tuiStateTarget s),
-              tuiStateInput = ""
+      put
+        ( TuiState
+            { tuiStateTarget = replaceWord spot (tuiStateTarget currentState) (head (remainingWords currentState)),
+              tuiStateInput = "",
+              currentScore = currentScore currentState + 1,
+              remainingWords = tail (remainingWords currentState),
+              timer = timer currentState,
+              distance = replaceDistance spot (distance currentState),
+              health = health currentState,
+              announcement = (0, ""),
+              difficultyLevel = difficultyLevel currentState
             }
-        else -- there are no more words to type in this volley. Go to the next volley!
-
-          put
-            ( TuiState
-                { tuiStateTarget = getNextVolleyOfWords (remainingWords currentState),
-                  tuiStateInput = "",
-                  currentScore = currentScore currentState + 1,
-                  remainingWords = drop 3 (remainingWords currentState),
-                  timer = timer currentState,
-                  distance = 0,
-                  level = level currentState,
-                  health = health currentState,
-                  announcement = (0, ""),
-                  difficultyLevel = difficultyLevel currentState
-                }
-            )
+        )
     else do
-      -- Incorrect; reset the input tracker
       modify $ \s -> s {tuiStateInput = ""}
       modify $ \s -> s {announcement = (2, "INCORRECT INPUT!")}
-      takeDamage True
+      takeDamage []
 
-getNextVolleyOfWords :: [String] -> [String]
-getNextVolleyOfWords wordsList = [head wordsList, wordsList !! 1, wordsList !! 2]
+replaceWord :: Int -> [String] -> String -> [String]
+replaceWord index list newWord
+  | index < 0 || index >= length list = []
+  | otherwise = take index list ++ [newWord] ++ drop (index + 1) list
 
-takeDamage :: Bool -> EventM n TuiState ()
-takeDamage incorrectWord = do
+replaceDistance :: Int -> [Int] -> [Int]
+replaceDistance index list
+  | index < 0 || index >= length list = []
+  | otherwise = take index list ++ [0] ++ drop (index + 1) list
+
+takeDamage :: [Bool] -> EventM n TuiState ()
+takeDamage hits = do
+  let incorrectWord = hits == []
   currentState <- get
-  put
-    ( TuiState
-        { tuiStateTarget = if incorrectWord then tuiStateTarget currentState else getNextVolleyOfWords (remainingWords currentState),
-          tuiStateInput = tuiStateInput currentState,
-          currentScore = currentScore currentState,
-          remainingWords = if incorrectWord then remainingWords currentState else drop 3 (remainingWords currentState),
-          timer = timer currentState,
-          distance = if incorrectWord then distance currentState else 0,
-          level = level currentState,
-          health = health currentState - 0.1 * fromIntegral (length (tuiStateTarget currentState)),
-          difficultyLevel = difficultyLevel currentState,
-          announcement = announcement currentState
-        }
-    )
+  if incorrectWord -- user typed incorrect word
+    then
+      put
+        ( TuiState
+            { tuiStateTarget = tuiStateTarget currentState,
+              tuiStateInput = tuiStateInput currentState,
+              currentScore = currentScore currentState,
+              remainingWords = remainingWords currentState,
+              timer = timer currentState,
+              distance = distance currentState,
+              health = health currentState - 0.1,
+              difficultyLevel = difficultyLevel currentState,
+              announcement = announcement currentState
+            }
+        )
+    else -- ship got hit
+
+      put
+        ( TuiState
+            { tuiStateTarget = boolToWord hits (tuiStateTarget currentState) (remainingWords currentState),
+              tuiStateInput = tuiStateInput currentState,
+              currentScore = currentScore currentState,
+              remainingWords = drop (countBools hits) (remainingWords currentState),
+              timer = timer currentState,
+              distance = boolToDistance hits (distance currentState),
+              health = health currentState - 0.1 * fromIntegral (countBools hits),
+              difficultyLevel = difficultyLevel currentState,
+              announcement = announcement currentState
+            }
+        )
   checkDead
+
+boolToDistance :: [Bool] -> [Int] -> [Int]
+boolToDistance (b : bs) (d : ds) = if b then 0 : boolToDistance bs ds else d : boolToDistance bs ds
+boolToDistance _ _ = []
+
+countBools :: [Bool] -> Int
+countBools boolList = length (filter id boolList)
+
+boolToWord :: [Bool] -> [String] -> [String] -> [String]
+boolToWord [] _ _ = []
+boolToWord _ [] _ = []
+boolToWord _ _ [] = []
+boolToWord (b : bs) (w : ws) rems@(r : rs) =
+  if b
+    then r : boolToWord bs ws rs
+    else w : boolToWord bs ws rems
 
 checkDead :: EventM n TuiState ()
 checkDead = do
   newState <- get
-  if health newState <=0 then
-    halt
-  else
-    put newState
-
-increaseLevel :: EventM n TuiState () -- increases level and resets timer
-increaseLevel = do
-  currentState <- get
-  put
-    ( TuiState
-        { tuiStateTarget = tuiStateTarget currentState,
-          tuiStateInput = "",
-          currentScore = currentScore currentState,
-          remainingWords = remainingWords currentState,
-          timer = 30,
-          distance = 0,
-          level = level currentState + 1,
-          health = health currentState,
-          difficultyLevel = difficultyLevel currentState,
-          announcement = announcement currentState
-        }
-    )
-  checkDead
+  if health newState <= 0
+    then halt
+    else put newState

@@ -1,13 +1,25 @@
 module Shuffle
   ( shuffle,
+    randomWordGenerator,
   )
 where
 
 import System.Random
+import Data.Char
 
-shuffle :: [String] -> [String] -> IO [String]
-shuffle [] y = return y
-shuffle x y = do
-    n <- randomRIO (0,(length x) - 1)
+shuffle :: [String] -> IO [String]
+shuffle x = imp x []
+
+imp :: [String] -> [String] -> IO [String]
+imp [] y = return y
+imp x y = do
+    n <- getStdRandom $ randomR (0, (length x) - 1)
     let (a,b) = splitAt n x
-    shuffle (a ++ tail b) ((x!!n):y)
+    imp (a ++ tail b) ((x !! n) : y)
+
+randomWordGenerator :: Int -> IO String
+randomWordGenerator 0 = return ""
+randomWordGenerator i = do
+  n <- getStdRandom $ randomR (0, 25)
+  l <- randomWordGenerator $ i-1
+  return $ (chr $ ord 'a' + n) : l

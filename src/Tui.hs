@@ -15,17 +15,28 @@ tui :: Difficulty -> IO Int
 tui diff = do
   chan <- newBChan 10
 
-  void $ forkIO $ forever $ do
-    writeBChan chan MoveRight
-    threadDelay 80000 -- enemy
+  void $ forkIO $ do
+    initialState <- buildInitialState diff
+    let loop state moveCounter = do
+          writeBChan chan MoveRight
+          threadDelay (calculateDelay moveCounter (health state))
+          loop state (moveCounter + 1)
+    
+    loop initialState 0
+
   void $ forkIO $ forever $ do
     writeBChan chan Tick
     threadDelay 1000000 -- game timer
+
   initialState <- buildInitialState diff
   (endState, vty) <- customMainWithDefaultVty (Just chan) tuiApp initialState
   V.shutdown vty
   return (currentScore endState)
 
+calculateDelay :: Int -> Float -> Int
+calculateDelay moveCounter currentHealth
+  | currentHealth  > 0 = max 30000 (100000 - (moveCounter * 150))
+  | otherwise = 1000000  -- Adjust this factor as needed, 50000 is the minimum delay -- Adjust this factor as needed
 -- return $ currentScore endState
 
 tuiApp :: App TuiState CustomEvent ResourceName

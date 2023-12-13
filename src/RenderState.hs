@@ -19,11 +19,10 @@ renderOngoingGameState ts = [a]
   where
     inputWord = if tuiStateInput ts == "" then " " else tuiStateInput ts
     targetWord = tuiStateTarget ts
+    wordDistances = distance ts
     ann = if fst (announcement ts) /= 0 then snd (announcement ts) else " "
-    a =
-      str ("Level: " <> show (level ts))
-        <=> str ("Time Left: " <> show (timer ts))
-        <=> enemyShip ts targetWord
+    a = str ("Time Left: " <> show (timer ts))
+        <=> enemyShip ts targetWord wordDistances
         <=> hCenter (withAttr inputAttr (str inputWord))
         <=> hCenter (withAttr announcementAttr (str ann))
         <=> padTop (Pad 5) (getHealth ts)
@@ -45,18 +44,19 @@ getHealth st = ui
     ui =
       str "Health: " <+> healthBar
 
-enemyShip :: TuiState -> [String] -> Widget ResourceName
-enemyShip ts wordsToShow =
+enemyShip :: TuiState -> [String] -> [Int] -> Widget ResourceName
+enemyShip ts wordsToShow wordDistances =
   padTop
     (Pad 2)
     ( evilShip
-        <+> enemyShipHelper ts wordsToShow
+        <+> enemyShipHelper ts wordsToShow wordDistances
         <+> ship
     )
 
-enemyShipHelper :: TuiState -> [String] -> Widget ResourceName
-enemyShipHelper _ [] = str ""
-enemyShipHelper ts wordsToShow = highlightMatchingPart (distance ts) (head wordsToShow) (tuiStateInput ts) <=> str "\n" <=> enemyShipHelper ts (tail wordsToShow)
+enemyShipHelper :: TuiState -> [String] -> [Int] -> Widget ResourceName
+-- enemyShipHelper _ [] _  = str ""
+enemyShipHelper ts (w:ws) (d:ds) = highlightMatchingPart (d) (w) (tuiStateInput ts) <=> str "\n" <=> enemyShipHelper ts ws ds
+enemyShipHelper _ _ _ = str "lakd"
 
 highlightMatchingPart :: Int -> String -> String -> Widget ResourceName
 highlightMatchingPart dist target input =

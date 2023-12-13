@@ -8,8 +8,7 @@ data TuiState = TuiState
     currentScore :: Int,
     remainingWords :: [String],
     timer :: Int,
-    distance :: Int,
-    level :: Int,
+    distance :: [Int],
     health :: Float,
     difficultyLevel :: Difficulty,
     announcement :: (Int, String)

@@ -9,6 +9,7 @@ import Dataloader (loadWords, Difficulty (Easy, Hard, Nightmare))
 import EventHandler
 import GameState
 import RenderState
+import qualified Graphics.Vty as V
 
 tui :: Difficulty -> IO Int
 tui diff = do
@@ -21,8 +22,8 @@ tui diff = do
     writeBChan chan Tick
     threadDelay 1000000 -- game timer
   initialState <- buildInitialState diff
-  void $ customMainWithDefaultVty (Just chan) tuiApp initialState
-  endState <- defaultMain tuiApp initialState
+  (endState, vty) <- customMainWithDefaultVty (Just chan) tuiApp initialState
+  V.shutdown vty
   return (currentScore endState)
 
 -- return $ currentScore endState

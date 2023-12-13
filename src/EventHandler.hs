@@ -156,6 +156,7 @@ takeDamage hits = do
             announcement = announcement currentState
           }
       )
+  checkDead
 
 boolToDistance :: [Bool] -> [Int] -> [Int]
 boolToDistance (b:bs) (d:ds) = if b == True then [0] else d: boolToDistance bs ds
@@ -172,3 +173,10 @@ boolToWord (b:bs) (w:ws) rems@(r:rs) = if b == True
   then r : boolToWord bs ws rs
   else w :  boolToWord bs ws rems 
 
+checkDead :: EventM n TuiState ()
+checkDead = do
+  newState <- get
+  if health newState <=0 then
+    halt
+  else
+    put newState

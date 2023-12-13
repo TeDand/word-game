@@ -9,8 +9,8 @@ import Dataloader
 import Scoreboard
 import qualified Graphics.Vty as V
 
-dummy :: Difficulty -> IO Int
-dummy _ = return 0
+-- dummy :: Difficulty -> IO Int
+-- dummy _ = return 0
 
 tr :: String -> Widget ()
 tr x = str x
@@ -24,19 +24,19 @@ fm i = case i of
 
 menu :: Int -> IO ()
 menu i = do
-  x <- topMain $ tr top
+  x  <- defaultMain topApp ""
   sb <- readScoreboard
   case x of
     "b" -> do 
             s <- tui $ fm i
-            n <- nameMain $ tr name
+            n <- defaultMain nameApp ""
             if n/="" then writeScoreboard (addNewScore sb n s) else return ()
-            
+            menu i
     "s" -> do
             simpleMain $ tr $ "press any key to quit\n" ++ (show sb)
             menu i
     "o" -> do
-            d <- diffMain i $ tr diff
+            d <- defaultMain diffApp i
             menu d
     "q" -> return ()
     _ -> error "?"
@@ -48,12 +48,9 @@ top = "Hello, welcome to play Wordgame!\n\
       \press o to change option\n\
       \press q to quit."
 
-topMain :: Widget () -> IO String
-topMain w = defaultMain (topApp w) ""
-
-topApp :: Widget () -> App String e ()
-topApp w =
-    App { appDraw = const [w]
+topApp :: App String e ()
+topApp =
+    App { appDraw = const [str top]
         , appHandleEvent = topHandle
         , appStartEvent = return ()
         , appAttrMap = const $ attrMap V.defAttr []
@@ -71,21 +68,18 @@ name :: String
 name = "Thank you for playing.\n\
         \Type your name to save your score in the scoreborad.\n\
         \Click esc when you finish.\n\
-        \If you don't want to save your score, click esc without type your name."
+        \If you don't want to save your score, click esc without type your name.\n"
 
-nameMain :: Widget () -> IO String
-nameMain w = defaultMain (nameApp w) ""
-
-nameApp :: Widget () -> App String e ()
-nameApp w =
-    App { appDraw = const [w]
+nameApp :: App String e String
+nameApp =
+    App { appDraw = (\s -> [str name <=> str s])
         , appHandleEvent = nameHandle
         , appStartEvent = return ()
         , appAttrMap = const $ attrMap V.defAttr []
         , appChooseCursor = neverShowCursor
         }
 
-nameHandle :: BrickEvent () e -> EventM () String ()
+nameHandle :: BrickEvent String e -> EventM String String ()
 nameHandle (VtyEvent (V.EvKey V.KEsc [])) = halt
 nameHandle (VtyEvent (V.EvKey (V.KChar c) [])) = do s <- get; put $ s++[c]
 nameHandle _ = continueWithoutRedraw
@@ -97,12 +91,9 @@ diff= "Input a number to select the difficulty level\n\
       \3: Nightmare\n\ 
       \Press esc to cancel."
 
-diffMain :: Int -> Widget () -> IO Int
-diffMain i w = defaultMain (diffApp w) i
-
-diffApp :: Widget () -> App Int e ()
-diffApp w =
-    App { appDraw = const [w]
+diffApp :: App Int e ()
+diffApp =
+    App { appDraw = const [str diff]
         , appHandleEvent = diffHandle
         , appStartEvent = return ()
         , appAttrMap = const $ attrMap V.defAttr []

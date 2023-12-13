@@ -23,6 +23,7 @@ renderOngoingGameState ts = [a]
     ann = if fst (announcement ts) /= 0 then snd (announcement ts) else " "
     a =
       str ("Time Survived: " <> show (timer ts))
+        <=> str ("Current Score: "  <> show (currentScore ts))
         <=> enemyShip ts targetWord wordDistances
         <=> hCenter (withAttr inputAttr (str inputWord))
         <=> hCenter (withAttr announcementAttr (str ann))

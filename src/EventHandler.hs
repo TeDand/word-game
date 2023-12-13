@@ -2,10 +2,10 @@ module EventHandler (handleTuiEvent, CustomEvent (MoveRight, Tick)) where
 
 import Brick
 import Control.Monad
+import qualified Data.List as L
 import Dataloader (Difficulty (Easy))
 import GameState
 import Graphics.Vty.Input.Events
-import qualified Data.List as L
 
 data CustomEvent = MoveRight | Tick deriving (Show)
 
@@ -28,15 +28,18 @@ changeDistance = do
   ts <- get
   let d = distance ts
   modify $ \s -> s {distance = map (\dist -> if dist < 90 then dist + 1 else 0) d}
-  let hit = map (\dist -> if dist == 90 then True else False) (distance ts)
+  let word_lens = map length (tuiStateTarget ts)
+  let norm_dists = zipWith (+) (distance ts) word_lens
+  let hit = map (\dist -> dist == 90) norm_dists
   takeDamage hit
   when (health ts <= 0) $ do
     halt
-timerTick :: EventM n TuiState () 
+
+timerTick :: EventM n TuiState ()
 timerTick = do
   ts <- get
   let t = timer ts
-  modify $ \s -> s {timer = t+ 1}
+  modify $ \s -> s {timer = t + 1}
   let a = fst (announcement ts)
   modify $ \s -> s {announcement = if a > 0 then (a - 1, snd (announcement ts)) else (0, "")}
 
@@ -47,8 +50,10 @@ addUserInput c = do
 
 removeUserInput :: EventM n TuiState ()
 removeUserInput = do
-  _ <- get
-  modify $ \s -> s {tuiStateInput = init (tuiStateInput s)}
+  ts <- get
+  if tuiStateInput ts == ""
+    then return ()
+    else modify $ \s -> s {tuiStateInput = init (tuiStateInput s)}
 
 verifyInputAgainstWord :: EventM n TuiState ()
 verifyInputAgainstWord = do
@@ -87,11 +92,11 @@ verifyNotEasyInput :: EventM n TuiState ()
 -- For easy mode, we just compare to the first word
 verifyNotEasyInput = do
   currentState <- get
-  if (elem (tuiStateInput currentState) (tuiStateTarget currentState))
+  if elem (tuiStateInput currentState) (tuiStateTarget currentState)
     then do
       let spot = case L.elemIndex (tuiStateInput currentState) (tuiStateTarget currentState) of
-                  Just num -> num
-                  Nothing  -> -1
+            Just num -> num
+            Nothing -> -1
 
       put
         ( TuiState
@@ -114,52 +119,51 @@ verifyNotEasyInput = do
 replaceWord :: Int -> [String] -> String -> [String]
 replaceWord index list newWord
   | index < 0 || index >= length list = []
-  | otherwise =   take index list ++ [newWord] ++ drop (index + 1) list
+  | otherwise = take index list ++ [newWord] ++ drop (index + 1) list
 
 replaceDistance :: Int -> [Int] -> [Int]
 replaceDistance index list
   | index < 0 || index >= length list = []
-  | otherwise =   take index list ++ [0] ++ drop (index + 1) list
-
-
+  | otherwise = take index list ++ [0] ++ drop (index + 1) list
 
 takeDamage :: [Bool] -> EventM n TuiState ()
 takeDamage hits = do
-  let incorrectWord = if hits == [] then True else False
+  let incorrectWord = hits == []
   currentState <- get
   if incorrectWord -- user typed incorrect word
-    then 
+    then
       put
-         ( TuiState
-          { tuiStateTarget =  tuiStateTarget currentState ,
-            tuiStateInput = tuiStateInput currentState,
-            currentScore = currentScore currentState,
-            remainingWords = remainingWords currentState ,
-            timer = timer currentState,
-            distance =  distance currentState ,
-            health =  health currentState - 0.1 ,
-            difficultyLevel = difficultyLevel currentState,
-            announcement = announcement currentState
-          }
-    )
-  else -- ship got hit
-    put
-      ( TuiState
-          { tuiStateTarget =  boolToWord hits (tuiStateTarget currentState) (remainingWords currentState),
-            tuiStateInput = tuiStateInput currentState,
-            currentScore = currentScore currentState,
-            remainingWords =  drop (countBools hits) (remainingWords currentState),
-            timer = timer currentState,
-            distance =  boolToDistance hits (distance currentState),
-            health =  health currentState - 0.1 * fromIntegral (countBools hits),
-            difficultyLevel = difficultyLevel currentState,
-            announcement = announcement currentState
-          }
-      )
+        ( TuiState
+            { tuiStateTarget = tuiStateTarget currentState,
+              tuiStateInput = tuiStateInput currentState,
+              currentScore = currentScore currentState,
+              remainingWords = remainingWords currentState,
+              timer = timer currentState,
+              distance = distance currentState,
+              health = health currentState - 0.1,
+              difficultyLevel = difficultyLevel currentState,
+              announcement = announcement currentState
+            }
+        )
+    else -- ship got hit
+
+      put
+        ( TuiState
+            { tuiStateTarget = boolToWord hits (tuiStateTarget currentState) (remainingWords currentState),
+              tuiStateInput = tuiStateInput currentState,
+              currentScore = currentScore currentState,
+              remainingWords = drop (countBools hits) (remainingWords currentState),
+              timer = timer currentState,
+              distance = boolToDistance hits (distance currentState),
+              health = health currentState - 0.1 * fromIntegral (countBools hits),
+              difficultyLevel = difficultyLevel currentState,
+              announcement = announcement currentState
+            }
+        )
   checkDead
 
 boolToDistance :: [Bool] -> [Int] -> [Int]
-boolToDistance (b:bs) (d:ds) = if b == True then 0 : boolToDistance bs ds else d: boolToDistance bs ds
+boolToDistance (b : bs) (d : ds) = if b then 0 : boolToDistance bs ds else d : boolToDistance bs ds
 boolToDistance _ _ = []
 
 countBools :: [Bool] -> Int
@@ -169,14 +173,14 @@ boolToWord :: [Bool] -> [String] -> [String] -> [String]
 boolToWord [] _ _ = []
 boolToWord _ [] _ = []
 boolToWord _ _ [] = []
-boolToWord (b:bs) (w:ws) rems@(r:rs) = if b == True 
-  then r : boolToWord bs ws rs
-  else w :  boolToWord bs ws rems 
+boolToWord (b : bs) (w : ws) rems@(r : rs) =
+  if b
+    then r : boolToWord bs ws rs
+    else w : boolToWord bs ws rems
 
 checkDead :: EventM n TuiState ()
 checkDead = do
   newState <- get
-  if health newState <=0 then
-    halt
-  else
-    put newState
+  if health newState <= 0
+    then halt
+    else put newState

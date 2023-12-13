@@ -1,3 +1,5 @@
 "someone" 100
 "sometwo" 200
 "Darren" 11
+"q" 0
+"qq" 0

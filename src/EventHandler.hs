@@ -19,7 +19,10 @@ handleTuiEvent e = case e of
     EvKey (KChar c) [] -> addUserInput c
     EvKey KBS [] -> removeUserInput
     EvKey KEnter [] -> verifyInputAgainstWord
-    EvKey KEsc [] -> halt
+    EvKey KEsc [] -> do
+      -- s <- get
+      modify $ \s -> s {health = 0}
+      halt
     _ -> return ()
   _ -> return ()
 

@@ -17,10 +17,10 @@ tr x = str x
 
 fm :: Int -> Difficulty
 fm i = case i of
-  1 -> Easy
-  2 -> Hard
-  3 -> Nightmare
-  _ -> error "impossibile difficulty level"
+        1 -> Easy
+        2 -> Hard
+        3 -> Nightmare
+        _ -> error "Please choose a valid difficulty level"
 
 menu :: Int -> IO ()
 menu i = do
@@ -42,12 +42,11 @@ menu i = do
     _ -> error "?"
 
 top :: String
-top =
-  "Hello, welcome to play Wordgame!\n\
-  \press b to begin play\n\
-  \press s to see the scoreboard\n\
-  \press o to change option\n\
-  \press q to quit."
+top = "Hello, welcome to play Wordgame!\n\
+      \press b to start the game\n\
+      \press s to see the scoreboard\n\
+      \press o to change the difficulty\n\
+      \press q to quit."
 
 topApp :: App String e ()
 topApp =
@@ -67,11 +66,10 @@ topHandle (VtyEvent (V.EvKey (V.KChar 'q') [])) = do put "q"; halt
 topHandle _ = continueWithoutRedraw
 
 name :: String
-name =
-  "Thank you for playing.\n\
-  \Type your name to save your score in the scoreborad.\n\
-  \Click esc when you finish.\n\
-  \If you don't want to save your score, click esc without type your name.\n"
+name = "Thank you for playing.\n\
+        \Type your name to save your score in the scoreboard.\n\
+        \Click esc when you finish.\n\
+        \If you don't want to save your score, press esc without typing your name.\n"
 
 nameApp :: App String e String
 nameApp =

@@ -65,7 +65,6 @@ verifyEasyInput = do
   currentState <- get
   if head (tuiStateTarget currentState) == tuiStateInput currentState
     then -- User has input the words correctly
-
       put
         ( TuiState
             { tuiStateTarget = [head (remainingWords currentState)],

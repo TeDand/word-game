@@ -69,10 +69,7 @@ verifyEasyInput = do
 
       put
         ( TuiState
-            { tuiStateTarget = 
-              if remainingWords currentState == ["dummy"] 
-                then [""]
-                else [head (remainingWords currentState)],
+            { tuiStateTarget = [head (remainingWords currentState)],
               tuiStateInput = "",
               currentScore = currentScore currentState + 1,
               remainingWords = tail (remainingWords currentState),
@@ -101,9 +98,7 @@ verifyNotEasyInput = do
 
       put
         ( TuiState
-            { tuiStateTarget = if remainingWords currentState == ["dummy"] 
-              then replaceWord spot (tuiStateTarget currentState) ""
-              else replaceWord spot (tuiStateTarget currentState) (head (remainingWords currentState)),
+            { tuiStateTarget = replaceWord spot (tuiStateTarget currentState) (head (remainingWords currentState)),
               tuiStateInput = "",
               currentScore = currentScore currentState + 1,
               remainingWords = tail (remainingWords currentState),

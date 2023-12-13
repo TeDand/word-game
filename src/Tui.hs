@@ -52,7 +52,7 @@ buildEasyInitialState = do
       TuiState
         { tuiStateTarget = [head wordsToType],
           tuiStateInput = "",
-          remainingWords = tail wordsToType,
+          remainingWords = tail wordsToType ++ [""],
           currentScore = 0,
           timer = 20,
           distance = [0],
@@ -70,7 +70,7 @@ buildHardInitialState = do
       TuiState
         { tuiStateTarget = [head wordsToType, wordsToType !! 1, wordsToType !! 2],
           tuiStateInput = "",
-          remainingWords = drop 3 wordsToType,
+          remainingWords = drop 3 wordsToType ++ ["","",""],
           currentScore = 0,
           timer = 20,
           distance = [0,0,0],
@@ -89,7 +89,7 @@ buildNightmareInitialState = do
       TuiState
         { tuiStateTarget = [head wordsToType, wordsToType !! 1, wordsToType !! 2],
           tuiStateInput = "",
-          remainingWords = drop 3 wordsToType,
+          remainingWords = drop 3 wordsToType ++ ["","",""],
           currentScore = 0,
           timer = 20,
           distance = [0,0,0],

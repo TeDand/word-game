@@ -19,7 +19,10 @@ handleTuiEvent e = case e of
     EvKey (KChar c) [] -> addUserInput c
     EvKey KBS [] -> removeUserInput
     EvKey KEnter [] -> verifyInputAgainstWord
-    EvKey KEsc [] -> halt
+    EvKey KEsc [] -> do
+      -- s <- get
+      modify $ \s -> s {health = 0}
+      halt
     _ -> return ()
   _ -> return ()
 
@@ -66,7 +69,10 @@ verifyEasyInput = do
 
       put
         ( TuiState
-            { tuiStateTarget = [head (remainingWords currentState)],
+            { tuiStateTarget = 
+              if remainingWords currentState == ["dummy"] 
+                then [""]
+                else [head (remainingWords currentState)],
               tuiStateInput = "",
               currentScore = currentScore currentState + 1,
               remainingWords = tail (remainingWords currentState),
@@ -95,7 +101,9 @@ verifyNotEasyInput = do
 
       put
         ( TuiState
-            { tuiStateTarget = replaceWord spot (tuiStateTarget currentState) (head (remainingWords currentState)),
+            { tuiStateTarget = if remainingWords currentState == ["dummy"] 
+              then replaceWord spot (tuiStateTarget currentState) ""
+              else replaceWord spot (tuiStateTarget currentState) (head (remainingWords currentState)),
               tuiStateInput = "",
               currentScore = currentScore currentState + 1,
               remainingWords = tail (remainingWords currentState),

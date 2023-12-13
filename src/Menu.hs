@@ -20,7 +20,7 @@ fm i = case i of
         1 -> Easy
         2 -> Hard
         3 -> Nightmare
-        _ -> error "impossibile difficulty level"
+        _ -> error "Please choose a valid difficulty level"
 
 menu :: Int -> IO ()
 menu i = do
@@ -43,9 +43,9 @@ menu i = do
 
 top :: String
 top = "Hello, welcome to play Wordgame!\n\
-      \press b to begin play\n\
+      \press b to start the game\n\
       \press s to see the scoreboard\n\
-      \press o to change option\n\
+      \press o to change the difficulty\n\
       \press q to quit."
 
 topApp :: App String e ()
@@ -66,9 +66,9 @@ topHandle _ = continueWithoutRedraw
 
 name :: String
 name = "Thank you for playing.\n\
-        \Type your name to save your score in the scoreborad.\n\
+        \Type your name to save your score in the scoreboard.\n\
         \Click esc when you finish.\n\
-        \If you don't want to save your score, click esc without type your name.\n"
+        \If you don't want to save your score, press esc without typing your name.\n"
 
 nameApp :: App String e String
 nameApp =

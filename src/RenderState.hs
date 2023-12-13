@@ -10,9 +10,9 @@ import Ships
 drawTui :: TuiState -> [Widget ResourceName]
 drawTui ts
   | abs (health ts) <= 0.1 = renderGameOverState ts
-  | otherwise = case remainingWords ts of
-      _ : _ -> renderOngoingGameState ts
-      [] -> renderGameEndState ts
+  | not (any (not . null) (tuiStateTarget ts)) = renderGameEndState ts
+  | otherwise =  renderOngoingGameState ts
+
 
 renderOngoingGameState :: TuiState -> [Widget ResourceName]
 renderOngoingGameState ts = [a]
@@ -69,7 +69,7 @@ highlightMatchingPart dist target input =
       | otherwise = go ts (replicate (length is) ' ') (acc <+> str [t]) -- Space or another character to indicate non-matching part
 
 renderGameEndState :: TuiState -> [Widget ResourceName]
-renderGameEndState ts = [str "You have beaten the game! Your final score is: " <+> str (show $ currentScore ts)]
+renderGameEndState ts = [str "You have beaten the game! Your final score is: " <+> str (show $ currentScore ts) <=> str "Press esc to continue"]
 
 renderGameOverState :: TuiState -> [Widget ResourceName]
-renderGameOverState ts = [gameOver <=> (str "You have lost the game! Your final score is: " <+> str (show $ currentScore ts))]
+renderGameOverState ts = [gameOver <=> (str "You have lost the game! Your final score is: " <+> str (show $ currentScore ts)) <=> str "Press esc to continue"]

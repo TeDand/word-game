@@ -28,7 +28,9 @@ changeDistance = do
   ts <- get
   let d = distance ts
   modify $ \s -> s {distance = map (\dist -> if dist < 90 then dist + 1 else 0) d}
-  let hit = map (\dist -> dist == 90) (distance ts)
+  let word_lens = map length (tuiStateTarget ts)
+  let norm_dists = zipWith (+) (distance ts) word_lens
+  let hit = map (\dist -> dist == 90) norm_dists
   takeDamage hit
   when (health ts <= 0) $ do
     halt

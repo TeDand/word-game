@@ -1,8 +1,9 @@
-module Dataloader (loadWords, Difficulty (Easy, Hard, Nightmare)) where
+module Dataloader (loadWords, Difficulty (Easy, Hard, Nightmare), lowerString) where
 
 import Shuffle
 import System.IO
 import System.Random
+import Data.Char (toLower)
 
 data Difficulty = Easy | Hard | Nightmare deriving (Show, Eq)
 
@@ -10,10 +11,11 @@ loadWords :: Difficulty -> IO [String]
 loadWords diff = case diff of
   Nightmare -> do
     all_words <- generateRandomStrings 20 6
-    return all_words
+    return (toLowerStrings all_words [])
   _ -> do
     all_words <- loadFile "data/words.txt"
-    shuffle $ lines all_words
+    shuffled <- shuffle $ lines all_words
+    return (toLowerStrings shuffled [])
 
 -- Function to generate a random string of a given length
 randomString :: Int -> IO String
@@ -29,5 +31,12 @@ generateRandomStrings numStrings stringLength =
 loadFile :: FilePath -> IO String
 loadFile f = do
   handle <- openFile f ReadMode
-  contents <- hGetContents handle -- this is lazy, you have to do something with it or it will not run
-  return contents
+  hGetContents handle -- this is lazy, you have to do something with it or it will not run
+
+
+toLowerStrings :: [String] -> [String] -> [String]
+toLowerStrings [] acc = acc
+toLowerStrings l acc = toLowerStrings (tail l) (acc ++ ([lowerString (head l)]))
+
+lowerString :: String -> String
+lowerString s = map toLower s

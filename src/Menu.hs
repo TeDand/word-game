@@ -43,10 +43,10 @@ menu i = do
 
 top :: String
 top =
-  "Hello, welcome to play Wordgame!\n\
-  \press b to begin play\n\
+  "Hello, welcome to Wordgame!\n\
+  \press b to begin playing\n\
   \press s to see the scoreboard\n\
-  \press o to change option\n\
+  \press o to change options (difficulty)\n\
   \press q to quit."
 
 topApp :: App String e ()
@@ -69,9 +69,9 @@ topHandle _ = continueWithoutRedraw
 name :: String
 name =
   "Thank you for playing.\n\
-  \Type your name to save your score in the scoreborad.\n\
-  \Click esc when you finish.\n\
-  \If you don't want to save your score, click esc without type your name.\n"
+  \Type your name to save your score in the scoreboard.\n\
+  \Press esc when you finish typing.\n\
+  \If you don't want to save your score, press esc without typing your name.\n"
 
 nameApp :: App String e String
 nameApp =

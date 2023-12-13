@@ -6,6 +6,7 @@ import qualified Data.List as L
 import Dataloader (Difficulty (Easy))
 import GameState
 import Graphics.Vty.Input.Events
+import Data.Char (toLower)
 
 data CustomEvent = MoveRight | Tick deriving (Show)
 
@@ -46,7 +47,8 @@ timerTick = do
 addUserInput :: Char -> EventM n TuiState ()
 addUserInput c = do
   _ <- get
-  modify $ \s -> s {tuiStateInput = tuiStateInput s ++ [c]}
+  modify $ \s -> s {tuiStateInput = tuiStateInput s ++ [toLower c]}
+
 
 removeUserInput :: EventM n TuiState ()
 removeUserInput = do
@@ -114,6 +116,7 @@ verifyNotEasyInput = do
       modify $ \s -> s {tuiStateInput = ""}
       modify $ \s -> s {announcement = (2, "INCORRECT INPUT!")}
       takeDamage []
+
 
 replaceWord :: Int -> [String] -> String -> [String]
 replaceWord index list newWord

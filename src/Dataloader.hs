@@ -3,15 +3,16 @@ module Dataloader
 where
 
 import System.IO
+import Shuffle
 
 data Difficulty = Easy | Hard | Nightmare deriving (Show, Eq)
 
 loadWords :: Difficulty -> IO [String]
 loadWords diff = case diff of
     Nightmare -> do {all_words <- loadFile "data/nightmare_words.txt";
-                    return (lines all_words)}
+                    shuffle $ lines all_words}
     _ -> do {all_words <- loadFile "data/words.txt";
-                    return (lines all_words)}
+                    shuffle $ lines all_words}
 
 
 loadFile :: FilePath -> IO String

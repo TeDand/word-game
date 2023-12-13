@@ -16,9 +16,10 @@ import Menu
 --   print (writtenBoard)
 
 main :: IO ()
-main = menu
-    -- do
-    -- w <- loadWords Hard
-    -- w <- (return ["abc","def","xyz"])
-    -- sw <- shuffle w
-    -- print(sw)
+main = menu 1
+
+-- do
+-- w <- loadWords Hard
+-- w <- (return ["abc","def","xyz"])
+-- sw <- shuffle w
+-- print(sw)

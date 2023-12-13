@@ -34,13 +34,24 @@ menu i = do
       if n /= "" then writeScoreboard (addNewScore sb n s) else return ()
       menu i
     "s" -> do
-      simpleMain $ tr $ "press any key to quit\n" ++ show sb
+      simpleMain $ hCenter (tr $ sbMenu (show sb))
       menu i
     "o" -> do
       d <- defaultMain diffApp i
       menu d
     "q" -> return ()
     _ -> error "?"
+
+sbMenu :: String -> String
+sbMenu scores =
+  "╔═══════════════════════════════════╗\n\
+  \║           Scoreboard              ║\n\
+  \╚═══════════════════════════════════╝\n\
+  \ \n"
+    ++ scores
+    ++ "\
+       \ \n\
+       \═════════════════════════════════════"
 
 top :: String
 top =
@@ -74,15 +85,15 @@ topHandle _ = continueWithoutRedraw
 
 name :: String
 name =
-  "╔════════════════════════════════════════════════╗\n\
-  \║               Thank you for playing!           ║\n\
-  \╚════════════════════════════════════════════════╝\n\
+  "╔══════════════════════════════════════════════════╗\n\
+  \║               Thank you for playing!             ║\n\
+  \╚══════════════════════════════════════════════════╝\n\
   \ \n\
-  \Type your name to save your score.\n\
-  \Click 'esc' when you finish.\n\
-  \If you don't want to save your score, press 'esc'.\n\
+  \• Type your name to save your score.\n\
+  \• Click 'esc' when you finish.\n\
+  \• If you don't want to save your score, press 'esc'.\n\
   \ \n\
-  \═════════════════════════════════════════════════"
+  \═══════════════════════════════════════════════════"
 
 nameApp :: App String e String
 nameApp =
@@ -101,17 +112,17 @@ nameHandle _ = continueWithoutRedraw
 
 diff :: String
 diff =
-  "╔════════════════════════════════════════════╗\n\
-  \║           Select Difficulty Level          ║\n\
-  \╚════════════════════════════════════════════╝\n\
+  "╔══════════════════════════════════════════════╗\n\
+  \║             Select Difficulty Level          ║\n\
+  \╚══════════════════════════════════════════════╝\n\
   \ \n\
-  \Input a number to select the difficulty level:\n\
+  \• Input a number to select the difficulty level:\n\
   \  1: Easy\n\
   \  2: Hard\n\
   \  3: Nightmare\n\
-  \Press 'esc' to cancel.\n\
+  \• Press 'esc' to cancel.\n\
   \ \n\
-  \══════════════════════════════════════════════"
+  \════════════════════════════════════════════════"
 
 diffApp :: App Int e ()
 diffApp =

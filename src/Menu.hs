@@ -80,9 +80,13 @@ topApp =
 
 topHandle :: BrickEvent () e -> EventM () String ()
 topHandle (VtyEvent (V.EvKey (V.KChar 'b') [])) = do put "b"; halt
+topHandle (VtyEvent (V.EvKey (V.KChar 'B') [])) = do put "b"; halt
 topHandle (VtyEvent (V.EvKey (V.KChar 's') [])) = do put "s"; halt
+topHandle (VtyEvent (V.EvKey (V.KChar 'S') [])) = do put "s"; halt
 topHandle (VtyEvent (V.EvKey (V.KChar 'o') [])) = do put "o"; halt
+topHandle (VtyEvent (V.EvKey (V.KChar 'O') [])) = do put "o"; halt
 topHandle (VtyEvent (V.EvKey (V.KChar 'q') [])) = do put "q"; halt
+topHandle (VtyEvent (V.EvKey (V.KChar 'Q') [])) = do put "q"; halt
 topHandle _ = continueWithoutRedraw
 
 name :: String

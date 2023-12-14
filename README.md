@@ -4,6 +4,14 @@ Word game implemented in Haskell for CSE 230.
 ## Project Brief
 Create a terminal based game where users can type target words to get points. The aim of the game would be to type as many words as possible without losing lives.
 
+## Project Structure
+
+## Game Rules
+
+## Game Features
+
+
+
 ## Milestones
 
 - Display word and prompt user input

@@ -1,6 +1,4 @@
 "someone" 100
 "sometwo" 200
 "Darren" 11
-"Darren " 10
-"q" 2
-"o" 0
+"tejas" 5

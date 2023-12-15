@@ -2,17 +2,126 @@
 Word game implemented in Haskell for CSE 230.
 
 ## Project Brief
-Create a terminal based game where users can type target words to get points. The aim of the game would be to type as many words as possible without losing lives.
+This repository includes a terminal based game where users can type target words to get points. The aim of the game would be to type as many words as possible without losing all your health.
 
 ## Project Structure
 
-## Game Rules
+The project structure is given below (note that most of the game logic is implemented in the `src` folder):
+
+```bash
+word-game
+├── app
+│   └── Main.hs
+├── data
+│   └── words.txt
+│         "contains words to load into game"
+├── demo
+│     "contains gifs for readme"
+├── src
+│   ├── Attributes.hs
+│   │     "contains style attributes"
+│   ├── Dataloader.hs
+│   │     "contains functions to load words"
+│   ├── EventHandler.hs
+│   │     "handles all user events for the game"
+│   ├── GameState.hs
+│   │     "contains game-state constructor"
+│   ├── Menu.hs
+│   │     "contains apps for every menu page"
+│   ├── RenderState.hs
+│   │     "renders game based on current state"
+│   ├── Scoreboard.hs
+│   │     "contains functions for scoreboard"
+│   ├── Ships.hs
+│   │     "contains ascii-art for ships and gameover screen"
+│   ├── Shuffle.hs
+│   │     "contains randomizer for word selecton/generation"
+│   └── Tui.hs
+│         "contains function call to generate game user interface"
+├── test
+│     "work in progress"
+├── .gitignore
+├── LICENSE
+├── makefile
+│     "contains useful make commands for running project" 
+├── package.yaml
+├── README.md
+├── sb.txt
+│     "contains store of saved high-scores" 
+├── stack.yaml
+├── stack.yaml.lock
+└── word-game.cabal
+```
+
+## Game Setup & Rules
+
+To start the game run the following command in the root directory:
+
+```
+make all
+```
+
+The rules of the game are as follows:
+
+-	Type words and press return to get rid of the attacking word bullet
+-	When you type a word incorrectly, or get hit you will lose health
+-	When you run out of health then it is game over
+
+![Game](https://github.com/TeDand/word-game/blob/main/demo/game.png?raw=true "Game")
 
 ## Game Features
 
+### Menu
 
+Upon starting the code, you are greeted with a menu that includes the option to play the game, as well as view scoreboard page and select the game difficulty:
 
-## Milestones
+![Menu](https://github.com/TeDand/word-game/blob/main/demo/menu.gif?raw=true "Menu")
+
+When you lose the game, you will be met with a game over screen, after which you can input your name to add to the scoreboard:
+
+![Game Over](https://github.com/TeDand/word-game/blob/main/demo/gameover.gif?raw=true "Game Over")
+
+### Difficulties
+
+There are three difficulties available to play. The first is easy, with a single target word:
+
+![Easy](https://github.com/TeDand/word-game/blob/main/demo/easy.gif?raw=true "Easy")
+
+The next is hard, with three target words:
+
+![Hard](https://github.com/TeDand/word-game/blob/main/demo/hard.gif?raw=true "Hard")
+
+And the final is nightmare, with three randomly generated target words:
+
+![Nightmare](https://github.com/TeDand/word-game/blob/main/demo/nightmare.gif?raw=true "Nightmare")
+
+### Input Detection
+
+Detects and hightights input, which is done for all target words in hard/nightmare difficulties. There are points awarded for correct entries:
+
+![Correct Input](https://github.com/TeDand/word-game/blob/main/demo/correct_input.gif?raw=true "Correct Input")
+
+The game also penalizes incorrect entries with an error message and health deduction:
+
+![Incorrect Input](https://github.com/TeDand/word-game/blob/main/demo/incorrect_input.gif?raw=true "Incorrect Input")
+
+### Hit Detection
+
+When you are too slow to type the words, they will hit your ship. There is a health loss penalty in these cases:
+
+![Hits](https://github.com/TeDand/word-game/blob/main/demo/hits.gif?raw=true "Hits")
+
+### Timer and Speedup
+
+As you can see, there is a timer implemented in the game. The longer you survive, the faster the words will shoot towards your ship. Here is the word speed at the start of the game:
+
+![Speed 1](https://github.com/TeDand/word-game/blob/main/demo/speed_1.gif?raw=true "Speed 1")
+
+And here is the faster word speed you are challenged with as the timer increases:
+
+![Speed 2](https://github.com/TeDand/word-game/blob/main/demo/speed_2.gif?raw=true "Speed 2")
+
+## Milestone 1 (Registration and Proposal)
 
 - Display word and prompt user input
 - Add gameplay system
@@ -36,7 +145,7 @@ Create a terminal based game where users can type target words to get points. Th
   - Adding menu system
 
 
-## Updates
+## Milestone 2 (Updates)
 
 This application currently has a few key components:
 

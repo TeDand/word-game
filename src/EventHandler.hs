@@ -3,7 +3,7 @@ module EventHandler (handleTuiEvent, CustomEvent (MoveRight, Tick)) where
 import Brick
 import Control.Monad
 import qualified Data.List as L
-import Dataloader (Difficulty (Easy))
+import Dataloader (Difficulty (Easy, Hard, Nightmare))
 import GameState
 import Graphics.Vty.Input.Events
 import Data.Char (toLower)
@@ -77,7 +77,7 @@ verifyEasyInput = do
         ( TuiState
             { tuiStateTarget = [head (remainingWords currentState)],
               tuiStateInput = "",
-              currentScore = currentScore currentState + 1,
+              currentScore = incrementScore currentState,
               remainingWords = tail (remainingWords currentState),
               timer = timer currentState,
               distance = [0],
@@ -106,7 +106,7 @@ verifyNotEasyInput = do
         ( TuiState
             { tuiStateTarget = replaceWord spot (tuiStateTarget currentState) (head (remainingWords currentState)),
               tuiStateInput = "",
-              currentScore = currentScore currentState + 1,
+              currentScore = incrementScore currentState,
               remainingWords = tail (remainingWords currentState),
               timer = timer currentState,
               distance = replaceDistance spot (distance currentState),
@@ -120,6 +120,11 @@ verifyNotEasyInput = do
       modify $ \s -> s {announcement = (2, "INCORRECT INPUT!")}
       takeDamage []
 
+incrementScore ::TuiState -> Int
+incrementScore currentState = case difficultyLevel currentState of 
+                Hard -> currentScore currentState + 3
+                Nightmare -> currentScore currentState + 5
+                _ -> currentScore currentState + 1
 
 replaceWord :: Int -> [String] -> String -> [String]
 replaceWord index list newWord

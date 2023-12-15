@@ -67,7 +67,7 @@ The rules of the game are as follows:
 -	When you type a word incorrectly, or get hit you will lose health
 -	When you run out of health then it is game over
 
-<img src="https://github.com/TeDand/word-game/blob/main/demo/game.png?raw=true" width="2300" height="240">
+<img src="https://github.com/TeDand/word-game/blob/main/demo/game.png?raw=true" width="2300" height="250">
 
 ## Game Features
 
@@ -75,17 +75,17 @@ The rules of the game are as follows:
 
 Upon starting the code, you are greeted with a menu that includes the option to play the game, as well as view scoreboard page and select the game difficulty:
 
-<img src="https://github.com/TeDand/word-game/blob/main/demo/menu.png?raw=true" width="2300" height="240">
+<img src="https://github.com/TeDand/word-game/blob/main/demo/menu.png?raw=true" width="2300" height="250">
 
-<img src="https://github.com/TeDand/word-game/blob/main/demo/scoreboard.png?raw=true" width="2300" height="240">
+<img src="https://github.com/TeDand/word-game/blob/main/demo/scoreboard.png?raw=true" width="2300" height="250">
 
-<img src="https://github.com/TeDand/word-game/blob/main/demo/difficulty.png?raw=true" width="2300" height="240">
+<img src="https://github.com/TeDand/word-game/blob/main/demo/difficulty.png?raw=true" width="2300" height="250">
 
 When you lose the game, you will be met with a game over screen, after which you can input your name to add to the scoreboard:
 
-<img src="https://github.com/TeDand/word-game/blob/main/demo/gameover.png?raw=true" width="2300" height="240">
+<img src="https://github.com/TeDand/word-game/blob/main/demo/gameover.png?raw=true" width="2300" height="250">
 
-<img src="https://github.com/TeDand/word-game/blob/main/demo/score_entry.png?raw=true" width="2300" height="240">
+<img src="https://github.com/TeDand/word-game/blob/main/demo/score_entry.png?raw=true" width="2300" height="250">
 
 ### Difficulties
 

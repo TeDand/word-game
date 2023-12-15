@@ -120,7 +120,7 @@ verifyNotEasyInput = do
       modify $ \s -> s {announcement = (2, "INCORRECT INPUT!")}
       takeDamage []
 
-incrementScore ::TuiState -> Int
+incrementScore :: TuiState -> Int
 incrementScore currentState = case difficultyLevel currentState of 
                 Hard -> currentScore currentState + 3
                 Nightmare -> currentScore currentState + 5

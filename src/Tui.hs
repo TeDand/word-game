@@ -35,9 +35,8 @@ tui diff = do
 
 calculateDelay :: Int -> Float -> Int
 calculateDelay moveCounter currentHealth
-  | currentHealth  > 0 = max 30000 (100000 - (moveCounter * 150))
-  | otherwise = 1000000  -- Adjust this factor as needed, 50000 is the minimum delay -- Adjust this factor as needed
--- return $ currentScore endState
+  | currentHealth  > 0 = max 30000 (100000 - (moveCounter * 100))
+  | otherwise = 100000000  
 
 tuiApp :: App TuiState CustomEvent ResourceName
 tuiApp =

@@ -67,7 +67,7 @@ The rules of the game are as follows:
 -	When you type a word incorrectly, or get hit you will lose health
 -	When you run out of health then it is game over
 
-<img src="https://github.com/TeDand/word-game/blob/main/demo/game.png?raw=true" width="2300" height="220">
+<img src="https://github.com/TeDand/word-game/blob/main/demo/game.png?raw=true" width="2300" height="225">
 
 ## Game Features
 

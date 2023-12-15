@@ -101,6 +101,8 @@ And the final is nightmare, with three randomly generated target words:
 
 ![Nightmare](https://github.com/TeDand/word-game/blob/main/demo/nightmare.gif?raw=true "Nightmare")
 
+The points awarded for each correct difficulty are 1, 3, and 5 for easy, hard, and nightmare respectively.
+
 ### Input Detection
 
 Detects and hightights input, which is done for all target words in hard/nightmare difficulties. There are points awarded for correct entries:
